@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1. FC Köln ITP — Player Card Developer</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/card.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════════
+       NAVIGATION
+  ══════════════════════════════════════════════════════════ -->
+  <nav class="app-nav">
+    <div class="nav-brand">
+      <span class="brand-fc">1. FC Köln</span>
+      <span class="brand-sep">·</span>
+      <span class="brand-itp">ITP Player Card Developer</span>
+    </div>
+    <div class="nav-actions">
+      <button id="btn-backup"  class="btn btn-outline">↓ Export JSON</button>
+      <button id="btn-restore" class="btn btn-outline">↑ Import JSON</button>
+      <input type="file" id="input-restore" accept=".json" style="display:none">
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════
+       VIEW 1: DASHBOARD
+  ══════════════════════════════════════════════════════════ -->
+  <div id="view-dashboard" class="view active">
+
+    <div class="view-header">
+      <h1>Players</h1>
+      <button id="btn-add-player" class="btn btn-primary">+ Add Player</button>
+    </div>
+
+    <div id="player-grid" class="player-grid"></div>
+
+    <div id="empty-state" class="empty-state" style="display:none">
+      <div class="empty-icon">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="24" r="12" fill="#ddd"/>
+          <path d="M8 56c0-13.255 10.745-24 24-24s24 10.745 24 24" fill="#ddd"/>
+        </svg>
+      </div>
+      <h2>No players yet</h2>
+      <p>Add your first ITP player to get started.</p>
+      <button class="btn btn-primary" onclick="App.showForm()">+ Add Player</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       VIEW 2: ADD / EDIT FORM
+  ══════════════════════════════════════════════════════════ -->
+  <div id="view-form" class="view">
+    <div class="form-layout">
+
+      <!-- Left: form inputs -->
+      <div class="form-panel">
+
+        <div class="form-header">
+          <button id="btn-back" class="btn btn-ghost">← Back</button>
+          <h2 id="form-title">Add Player</h2>
+        </div>
+
+        <form id="player-form" novalidate>
+
+          <!-- Basic Info -->
+          <div class="form-section">
+            <h3>Basic Info</h3>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-firstName">First Name</label>
+                <input type="text" id="f-firstName" placeholder="e.g. Colin" autocomplete="off">
+              </div>
+              <div class="form-field">
+                <label for="f-lastName">Last Name</label>
+                <input type="text" id="f-lastName" placeholder="e.g. Dickinson" autocomplete="off">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field" style="max-width:120px">
+                <label for="f-jerseyNumber">Jersey #</label>
+                <input type="number" id="f-jerseyNumber" min="1" max="99" placeholder="10">
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo & Logo -->
+          <div class="form-section">
+            <h3>Photo &amp; Partner Logo</h3>
+            <div class="form-row">
+              <div class="form-field">
+                <label>Player Photo</label>
+                <div class="upload-area" id="photo-upload-area">
+                  <input type="file" id="f-photo" accept="image/*">
+                  <div class="upload-placeholder">
+                    <span>Click or drag photo</span>
+                    <small>Auto-resized to 800px</small>
+                  </div>
+                  <img id="photo-preview" src="" style="display:none" alt="Photo preview">
+                </div>
+              </div>
+              <div class="form-field">
+                <label>Partner Logo <span style="font-weight:400;text-transform:none">(optional)</span></label>
+                <div class="upload-area" id="logo-upload-area">
+                  <input type="file" id="f-partnerLogo" accept="image/*">
+                  <div class="upload-placeholder">
+                    <span>Club / school badge</span>
+                    <small>Shown top-right of card</small>
+                  </div>
+                  <img id="logo-preview" src="" style="display:none" alt="Logo preview">
+                </div>
+                <button type="button" id="btn-clear-logo" class="btn btn-ghost btn-sm"
+                  style="display:none;margin-top:6px">Remove logo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overview -->
+          <div class="form-section">
+            <h3>Overview</h3>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-nationality">Nationality</label>
+                <input type="text" id="f-nationality" placeholder="e.g. American">
+              </div>
+              <div class="form-field">
+                <label for="f-passportCountry">Passport Country</label>
+                <input type="text" id="f-passportCountry" placeholder="e.g. USA / Germany">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-dateOfBirth">Date of Birth</label>
+                <input type="date" id="f-dateOfBirth">
+              </div>
+            </div>
+          </div>
+
+          <!-- Physical -->
+          <div class="form-section">
+            <h3>Physical</h3>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-heightCm">Height (cm)</label>
+                <input type="number" id="f-heightCm" min="100" max="220" step="1" placeholder="182">
+              </div>
+              <div class="form-field">
+                <label for="f-weightKg">Weight (kg)</label>
+                <input type="number" id="f-weightKg" min="30" max="150" step="0.1" placeholder="75">
+              </div>
+              <div class="form-field">
+                <label for="f-foot">Preferred Foot</label>
+                <select id="f-foot">
+                  <option value="">Select</option>
+                  <option value="Right">Right</option>
+                  <option value="Left">Left</option>
+                  <option value="Both">Both</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance Tests -->
+          <div class="form-section">
+            <h3>Performance Tests</h3>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-cmjCm">CMJ (cm)</label>
+                <input type="number" id="f-cmjCm" step="0.1" placeholder="58.3">
+              </div>
+              <div class="form-field">
+                <label for="f-broadJumpCm">Broad Jump (cm)</label>
+                <input type="number" id="f-broadJumpCm" step="0.1" placeholder="240">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-sprint5m">5m (sec)</label>
+                <input type="number" id="f-sprint5m" step="0.01" placeholder="1.02">
+              </div>
+              <div class="form-field">
+                <label for="f-sprint10m">10m (sec)</label>
+                <input type="number" id="f-sprint10m" step="0.01" placeholder="1.78">
+              </div>
+              <div class="form-field">
+                <label for="f-sprint30m">30m (sec)</label>
+                <input type="number" id="f-sprint30m" step="0.01" placeholder="4.05">
+              </div>
+              <div class="form-field">
+                <label for="f-sprint40yd">40YD (sec)</label>
+                <input type="number" id="f-sprint40yd" step="0.01" placeholder="4.55">
+              </div>
+            </div>
+          </div>
+
+          <!-- About -->
+          <div class="form-section">
+            <h3>About the Player</h3>
+            <div class="form-field">
+              <label for="f-aboutText">Scouting Description</label>
+              <textarea id="f-aboutText" rows="5"
+                placeholder="Strengths, playing style, development notes…"></textarea>
+            </div>
+          </div>
+
+          <!-- Positions -->
+          <div class="form-section">
+            <h3>Position</h3>
+            <p class="form-hint">Click positions on the pitch to select (max 3). First selected = primary.</p>
+            <div id="pitch-selector"></div>
+            <div id="selected-positions" class="selected-positions">
+              <span class="form-hint">No positions selected yet</span>
+            </div>
+          </div>
+
+          <!-- Videos -->
+          <div class="form-section">
+            <h3>Video Links</h3>
+            <div class="form-field">
+              <label for="f-video1">Video URL 1</label>
+              <input type="url" id="f-video1" placeholder="https://youtube.com/watch?v=…">
+            </div>
+            <div class="form-field">
+              <label for="f-video2">Video URL 2</label>
+              <input type="url" id="f-video2" placeholder="https://youtube.com/watch?v=…">
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" id="btn-delete" class="btn btn-danger" style="display:none">
+              Delete Player
+            </button>
+            <button type="button" id="btn-preview" class="btn btn-secondary">
+              Full Preview
+            </button>
+            <button type="button" id="btn-export-pdf" class="btn btn-outline"
+              style="display:none;background:#1A1A1A;color:#fff;border-color:#1A1A1A">
+              Export PDF
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Save Player
+            </button>
+          </div>
+
+        </form>
+      </div><!-- /form-panel -->
+
+      <!-- Right: live card preview -->
+      <div class="preview-panel">
+        <div class="preview-panel-header">
+          <h3>Live Preview</h3>
+          <button type="button" id="btn-export-pdf-preview" class="btn btn-primary"
+            style="display:none" onclick="document.getElementById('btn-export-pdf').click()">
+            Export PDF
+          </button>
+        </div>
+        <div class="preview-scale-wrapper">
+          <div id="form-card-preview"></div>
+        </div>
+      </div>
+
+    </div><!-- /form-layout -->
+  </div><!-- /view-form -->
+
+  <!-- ══════════════════════════════════════════════════════════
+       VIEW 3: STANDALONE PREVIEW
+  ══════════════════════════════════════════════════════════ -->
+  <div id="view-preview" class="view">
+    <div class="preview-header">
+      <button id="btn-preview-back" class="btn btn-ghost">← Back</button>
+      <h2 id="preview-player-name"></h2>
+      <button id="btn-preview-export" class="btn btn-primary" style="display:none">
+        Export PDF
+      </button>
+    </div>
+    <div class="preview-container">
+      <div id="standalone-card-preview"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       DELETE CONFIRMATION MODAL
+  ══════════════════════════════════════════════════════════ -->
+  <div id="modal-delete" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <h3>Delete Player?</h3>
+      <p>
+        Are you sure you want to permanently delete
+        <strong id="modal-player-name"></strong>?
+        This action cannot be undone.
+      </p>
+      <div class="modal-actions">
+        <button id="btn-modal-cancel"  class="btn btn-ghost">Cancel</button>
+        <button id="btn-modal-confirm" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       SCRIPTS
+       html2pdf.js loaded from CDN — requires internet connection.
+       For offline use, download html2pdf.bundle.min.js and
+       change the src to a local path.
+  ══════════════════════════════════════════════════════════ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="js/data.js"></script>
+  <script src="js/card.js"></script>
+  <script src="js/form.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
