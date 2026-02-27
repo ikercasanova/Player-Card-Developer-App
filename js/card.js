@@ -5,6 +5,60 @@
    A4 card (794 × 1123 px)
 ═══════════════════════════════════════════════════════════════ */
 
+// ── Performance Test Benchmarks (US College Avg) ──────────────
+const BENCHMARKS = {
+  cmjCm:        { label: 'CMJ',        unit: 'cm', benchmark: 36,   higherIsBetter: true,  min: 0,   max: 70  },
+  broadJumpCm:  { label: 'BROAD JUMP', unit: 'cm', benchmark: 220,  higherIsBetter: true,  min: 0,   max: 300 },
+  sprint30mSec: { label: '30M SPRINT', unit: 's',  benchmark: 4.18, higherIsBetter: false, min: 3.0, max: 6.0 },
+  sprint40ydSec:{ label: '40YD DASH',  unit: 's',  benchmark: 4.80, higherIsBetter: false, min: 3.5, max: 6.5 },
+};
+
+function calcBarPercent(value, cfg) {
+  if (value == null || value === '') return 0;
+  const v = parseFloat(value);
+  if (isNaN(v)) return 0;
+  if (cfg.higherIsBetter) {
+    // Higher = better → linear scale from min to max
+    return Math.max(0, Math.min(100, ((v - cfg.min) / (cfg.max - cfg.min)) * 100));
+  }
+  // Lower = better (sprints) → invert so faster = longer bar
+  return Math.max(0, Math.min(100, ((cfg.max - v) / (cfg.max - cfg.min)) * 100));
+}
+
+function calcBenchmarkPercent(cfg) {
+  if (cfg.higherIsBetter) {
+    return ((cfg.benchmark - cfg.min) / (cfg.max - cfg.min)) * 100;
+  }
+  return ((cfg.max - cfg.benchmark) / (cfg.max - cfg.min)) * 100;
+}
+
+function buildTestsHTML(tests) {
+  const legend = `<div class="test-bars-legend">
+    <span class="test-legend-item"><span class="test-legend-swatch" style="background:#E3000F"></span>Player</span>
+    <span class="test-legend-item"><span class="test-legend-swatch" style="background:#888"></span>US College Avg</span>
+  </div>`;
+
+  const rows = Object.entries(BENCHMARKS).map(([key, cfg]) => {
+    const raw = tests[key];
+    const hasValue = raw != null && raw !== '' && !isNaN(parseFloat(raw));
+    const displayVal = hasValue ? parseFloat(raw) + ' ' + cfg.unit : '—';
+    const barPct = hasValue ? calcBarPercent(raw, cfg) : 0;
+    const benchPct = calcBenchmarkPercent(cfg);
+
+    return `<div class="test-bar-row">
+      <div class="test-bar-label">${cfg.label}</div>
+      <div class="test-bar-value">${displayVal}</div>
+      <div class="test-bar-track">
+        <div class="test-bar-fill" style="width:${barPct.toFixed(1)}%"></div>
+        <div class="test-bar-benchmark" style="left:${benchPct.toFixed(1)}%"></div>
+      </div>
+      <div class="test-bar-bench-val">${cfg.benchmark} ${cfg.unit}</div>
+    </div>`;
+  }).join('');
+
+  return legend + rows;
+}
+
 const POSITION_COORDS = {
   GK:  { cx: 50, cy: 138 },
   CB:  { cx: 50, cy: 115 },
@@ -247,19 +301,9 @@ function buildCard(player) {
     </div>
 
     <!-- ── 4. PERFORMANCE TESTS ────────────────────────────── -->
-    <div class="card-section-block">
+    <div class="card-section-block card-tests-block">
       <div class="card-section-title">PERFORMANCE TESTS</div>
-      <table class="card-data-table">
-        <thead><tr><th>CMJ</th><th>BROAD JUMP</th><th>5m</th><th>10m</th><th>30m</th><th>40YD</th></tr></thead>
-        <tbody><tr>
-          <td>${tests.cmjCm        ? tests.cmjCm + ' cm'       : '—'}</td>
-          <td>${tests.broadJumpCm  ? tests.broadJumpCm + ' cm'  : '—'}</td>
-          <td>${tests.sprint5mSec  ? tests.sprint5mSec + 's'    : '—'}</td>
-          <td>${tests.sprint10mSec ? tests.sprint10mSec + 's'   : '—'}</td>
-          <td>${tests.sprint30mSec ? tests.sprint30mSec + 's'   : '—'}</td>
-          <td>${tests.sprint40ydSec? tests.sprint40ydSec + 's'  : '—'}</td>
-        </tr></tbody>
-      </table>
+      ${buildTestsHTML(tests)}
     </div>
 
     <!-- ── 5. ABOUT THE PLAYER ─────────────────────────────── -->

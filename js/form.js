@@ -111,8 +111,6 @@ const Form = {
     const t = player.tests || {};
     set('f-cmjCm',       t.cmjCm);
     set('f-broadJumpCm', t.broadJumpCm);
-    set('f-sprint5m',    t.sprint5mSec);
-    set('f-sprint10m',   t.sprint10mSec);
     set('f-sprint30m',   t.sprint30mSec);
     set('f-sprint40yd',  t.sprint40ydSec);
 
@@ -183,8 +181,6 @@ const Form = {
       tests: {
         cmjCm:        n('f-cmjCm'),
         broadJumpCm:  n('f-broadJumpCm'),
-        sprint5mSec:  n('f-sprint5m'),
-        sprint10mSec: n('f-sprint10m'),
         sprint30mSec: n('f-sprint30m'),
         sprint40ydSec: n('f-sprint40yd'),
       },
