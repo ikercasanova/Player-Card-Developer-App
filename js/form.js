@@ -282,16 +282,16 @@ const Form = {
       let fillColor, strokeColor, textColor;
       if (isPrimary) {
         fillColor   = '#E3000F';
-        strokeColor = 'white';
+        strokeColor = 'rgba(255,255,255,0.9)';
         textColor   = 'white';
       } else if (isSelected) {
-        fillColor   = 'rgba(227,0,15,0.25)';
-        strokeColor = '#E3000F';
-        textColor   = '#E3000F';
+        fillColor   = 'rgba(255,255,255,0.10)';
+        strokeColor = 'rgba(255,255,255,0.65)';
+        textColor   = 'rgba(255,255,255,0.85)';
       } else {
-        fillColor   = 'rgba(255,255,255,0.15)';
-        strokeColor = 'rgba(255,255,255,0.5)';
-        textColor   = 'rgba(255,255,255,0.75)';
+        fillColor   = 'rgba(255,255,255,0.05)';
+        strokeColor = 'rgba(255,255,255,0.18)';
+        textColor   = 'rgba(255,255,255,0.5)';
       }
 
       dotsHTML += `
@@ -306,24 +306,24 @@ const Form = {
     }
 
     const stripes = [0,1,2,3,4,5,6,7,8,9].map(i =>
-      `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#2d5a27' : '#336129'}"/>`
+      `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0f0f0f' : '#131313'}"/>`
     ).join('');
 
     return `<svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"
         style="width:100%;display:block;border-radius:6px;overflow:hidden;">
       ${stripes}
-      <rect x="3" y="3" width="94" height="144" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.8"/>
-      <line x1="3" y1="75" x2="97" y2="75" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-      <circle cx="50" cy="75" r="12" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-      <circle cx="50" cy="75" r="0.8" fill="rgba(255,255,255,0.7)"/>
-      <rect x="22" y="3" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-      <rect x="35" y="3" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-      <circle cx="50" cy="21" r="0.8" fill="rgba(255,255,255,0.7)"/>
-      <rect x="38" y="1" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
-      <rect x="22" y="120" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-      <rect x="35" y="138" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-      <circle cx="50" cy="129" r="0.8" fill="rgba(255,255,255,0.7)"/>
-      <rect x="38" y="146" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
+      <rect x="3" y="3" width="94" height="144" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
+      <line x1="3" y1="75" x2="97" y2="75" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="50" cy="75" r="12" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="50" cy="75" r="1.2" fill="rgba(255,255,255,0.3)"/>
+      <rect x="22" y="3" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <rect x="35" y="3" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="50" cy="21" r="1.2" fill="rgba(255,255,255,0.3)"/>
+      <rect x="38" y="1" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+      <rect x="22" y="120" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <rect x="35" y="138" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="50" cy="129" r="1.2" fill="rgba(255,255,255,0.3)"/>
+      <rect x="38" y="146" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
       ${dotsHTML}
     </svg>`;
   },

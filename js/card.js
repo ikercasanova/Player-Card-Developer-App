@@ -18,38 +18,17 @@ const POSITION_COORDS = {
   ST:  { cx: 50, cy: 30  }
 };
 
-// ── FC Köln Football School badge — always rendered inline ─────
-// Replace this SVG when the official logo is available.
-const FCK_BADGE_SVG = `
-<svg width="56" height="68" viewBox="0 0 56 68" xmlns="http://www.w3.org/2000/svg">
-  <!-- Shield outline -->
-  <path d="M28 1 L55 13 L55 41 Q55 60 28 67 Q1 60 1 41 L1 13 Z" fill="white"/>
-  <!-- Red fill -->
-  <path d="M28 5 L51 16 L51 40 Q51 58 28 64 Q5 58 5 40 L5 16 Z" fill="#E3000F"/>
-  <!-- White horizontal band -->
-  <rect x="5" y="28" width="46" height="14" fill="white"/>
-  <!-- FC KÖLN text -->
-  <text x="28" y="38.5" text-anchor="middle" fill="#E3000F"
-    font-size="10" font-weight="900" font-family="Arial,Helvetica,sans-serif">FC KÖLN</text>
-  <!-- FOOTBALL SCHOOL (upper red zone) -->
-  <text x="28" y="18" text-anchor="middle" fill="white"
-    font-size="6" font-weight="800" font-family="Arial,Helvetica,sans-serif" letter-spacing="0.3">FOOTBALL</text>
-  <text x="28" y="25.5" text-anchor="middle" fill="white"
-    font-size="6" font-weight="800" font-family="Arial,Helvetica,sans-serif" letter-spacing="0.5">SCHOOL</text>
-  <!-- ITP (lower red zone) -->
-  <text x="28" y="51" text-anchor="middle" fill="white"
-    font-size="7.5" font-weight="700" font-family="Arial,Helvetica,sans-serif" letter-spacing="1.5">ITP</text>
-  <text x="28" y="59" text-anchor="middle" fill="rgba(255,255,255,0.82)"
-    font-size="4" font-weight="600" font-family="Arial,Helvetica,sans-serif" letter-spacing="0.3">TALENT PATHWAY</text>
-</svg>`;
+// ── FC Köln Football School logo — official image ─────────────
+// Located at assets/logos/koln-fs.webp
+const FCK_LOGO_IMG = `<img src="assets/logos/koln-fs.webp" class="card-fck-logo" alt="1. FC Köln Football School">`;
 
 // ── Unit conversions ──────────────────────────────────────────
 
 function cmToFtIn(cm) {
   if (!cm) return '—';
-  const totalInches = cm / 2.54;
+  const totalInches = Math.round(cm / 2.54); // round total first to avoid 5'12"
   const ft = Math.floor(totalInches / 12);
-  const inches = Math.round(totalInches % 12);
+  const inches = totalInches % 12;
   return `${ft}'${inches}"`;
 }
 
@@ -74,6 +53,16 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 }
 
+function calcAge(dateStr) {
+  if (!dateStr) return null;
+  const dob = new Date(dateStr + 'T12:00:00');
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+  return age;
+}
+
 function val(v) {
   return (v !== undefined && v !== null && v !== '') ? v : '—';
 }
@@ -81,29 +70,30 @@ function val(v) {
 // ── Pitch SVG ─────────────────────────────────────────────────
 
 function buildPitchSVG(positions) {
+  // Dark alternating stripes — subtle, elegant
   const stripes = [0,1,2,3,4,5,6,7,8,9].map(i =>
-    `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#2d5a27' : '#336129'}"/>`
+    `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0f0f0f' : '#131313'}"/>`
   ).join('');
 
   const markings = `
     ${stripes}
-    <rect x="3" y="3" width="94" height="144" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.8"/>
-    <line x1="3" y1="75" x2="97" y2="75" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-    <circle cx="50" cy="75" r="12" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-    <circle cx="50" cy="75" r="1" fill="rgba(255,255,255,0.7)"/>
-    <rect x="22" y="3" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-    <rect x="35" y="3" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-    <circle cx="50" cy="21" r="1" fill="rgba(255,255,255,0.7)"/>
-    <rect x="38" y="1" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
-    <rect x="22" y="120" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-    <rect x="35" y="138" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.6"/>
-    <circle cx="50" cy="129" r="1" fill="rgba(255,255,255,0.7)"/>
-    <rect x="38" y="146" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="0.8"/>
+    <rect x="3" y="3" width="94" height="144" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
+    <line x1="3" y1="75" x2="97" y2="75" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+    <circle cx="50" cy="75" r="12" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+    <circle cx="50" cy="75" r="1.2" fill="rgba(255,255,255,0.3)"/>
+    <rect x="22" y="3" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+    <rect x="35" y="3" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+    <circle cx="50" cy="21" r="1.2" fill="rgba(255,255,255,0.3)"/>
+    <rect x="38" y="1" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+    <rect x="22" y="120" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+    <rect x="35" y="138" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+    <circle cx="50" cy="129" r="1.2" fill="rgba(255,255,255,0.3)"/>
+    <rect x="38" y="146" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
   `;
 
   // Ghost markers
   const ghosts = Object.values(POSITION_COORDS).map(c =>
-    `<circle cx="${c.cx}" cy="${c.cy}" r="4" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.22)" stroke-width="0.6"/>`
+    `<circle cx="${c.cx}" cy="${c.cy}" r="4.5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>`
   ).join('');
 
   // Selected positions
@@ -113,15 +103,17 @@ function buildPitchSVG(positions) {
       const c = POSITION_COORDS[pos.code];
       if (!c) return;
       if (i === 0) {
+        // Primary: solid red with white outline glow
         selected += `
-          <circle cx="${c.cx}" cy="${c.cy}" r="6" fill="#E3000F" stroke="white" stroke-width="1"/>
+          <circle cx="${c.cx}" cy="${c.cy}" r="7" fill="#E3000F" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
           <text x="${c.cx}" y="${c.cy + 0.5}" text-anchor="middle" dominant-baseline="middle"
-            fill="white" font-size="3.5" font-weight="bold" font-family="Arial,sans-serif">${pos.code}</text>`;
+            fill="white" font-size="3.8" font-weight="bold" font-family="Arial,sans-serif">${pos.code}</text>`;
       } else {
+        // Secondary: white outline on dark
         selected += `
-          <circle cx="${c.cx}" cy="${c.cy}" r="6" fill="rgba(227,0,15,0.18)" stroke="#E3000F" stroke-width="1"/>
+          <circle cx="${c.cx}" cy="${c.cy}" r="7" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.65)" stroke-width="1"/>
           <text x="${c.cx}" y="${c.cy + 0.5}" text-anchor="middle" dominant-baseline="middle"
-            fill="#ffcccc" font-size="3.5" font-weight="bold" font-family="Arial,sans-serif">${pos.code}</text>`;
+            fill="rgba(255,255,255,0.85)" font-size="3.8" font-weight="bold" font-family="Arial,sans-serif">${pos.code}</text>`;
       }
     });
   }
@@ -142,7 +134,13 @@ function getYouTubeInfo(url) {
 
 function buildVideosHTML(urls) {
   if (!urls || !urls.filter(u => u && u.trim()).length) {
-    return '<div class="card-no-content">No videos added</div>';
+    return `<div class="card-no-videos">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="5" width="22" height="16" rx="2" stroke="#ddd" stroke-width="1.5" fill="none"/>
+        <path d="M23 11l7-4v14l-7-4V11z" stroke="#ddd" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+      </svg>
+      <span>No video links added</span>
+    </div>`;
   }
   return urls.filter(u => u && u.trim()).map(url => {
     const yt = getYouTubeInfo(url);
@@ -173,9 +171,10 @@ function buildCard(player) {
   const jerseyWatermark = player.jerseyNumber
     ? `<span class="header-jersey-watermark">${player.jerseyNumber}</span>` : '';
 
-  // Partner logo: wrapped in white box so it blends regardless of source image background
+  // Partner logo: clean "PARTNER CLUB" sponsor badge — handles logos with any background
   const partnerLogoHTML = player.partnerLogoBase64
     ? `<div class="card-header-right">
+        <span class="partner-badge-label">PARTNER CLUB</span>
         <div class="partner-logo-box">
           <img src="${player.partnerLogoBase64}" class="header-partner-logo" alt="Partner Logo">
         </div>
@@ -197,7 +196,7 @@ function buildCard(player) {
   card.innerHTML = `
     <!-- ── 1. HEADER ───────────────────────────────────────── -->
     <div class="card-header">
-      <div class="card-header-badge">${FCK_BADGE_SVG}</div>
+      <div class="card-header-badge">${FCK_LOGO_IMG}</div>
       <div class="card-header-center">
         <div class="card-program-name">1. FC KÖLN — INTERNATIONAL TALENT PATHWAY</div>
         <div class="card-player-name-wrap">
@@ -222,6 +221,7 @@ function buildCard(player) {
           <tr><td class="info-label">Nationality</td><td class="info-value">${val(player.nationality)}</td></tr>
           <tr><td class="info-label">Passport</td><td class="info-value">${val(player.passportCountry)}</td></tr>
           <tr><td class="info-label">Date of Birth</td><td class="info-value">${formatDate(player.dateOfBirth)}</td></tr>
+          ${calcAge(player.dateOfBirth) !== null ? `<tr><td class="info-label">Age</td><td class="info-value">${calcAge(player.dateOfBirth)} years</td></tr>` : ''}
         </table>
       </div>
       <div class="card-contact-cell">
