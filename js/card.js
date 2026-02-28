@@ -6,11 +6,12 @@
 ═══════════════════════════════════════════════════════════════ */
 
 // ── Performance Test Benchmarks (US College Avg) ──────────────
+// Sources documented in benchmarks-research.md
 const BENCHMARKS = {
   cmjCm:        { label: 'CMJ',        unit: 'cm', benchmark: 36,   higherIsBetter: true,  min: 0,   max: 70  },
   broadJumpCm:  { label: 'BROAD JUMP', unit: 'cm', benchmark: 220,  higherIsBetter: true,  min: 0,   max: 300 },
-  sprint30mSec: { label: '30M SPRINT', unit: 's',  benchmark: 4.18, higherIsBetter: false, min: 3.0, max: 6.0 },
-  sprint40ydSec:{ label: '40YD DASH',  unit: 's',  benchmark: 4.80, higherIsBetter: false, min: 3.5, max: 6.5 },
+  sprint30mSec: { label: '30M SPRINT', unit: 's',  benchmark: 4.25, higherIsBetter: false, min: 3.0, max: 6.0 },
+  sprint40ydSec:{ label: '40YD DASH',  unit: 's',  benchmark: 4.85, higherIsBetter: false, min: 3.5, max: 6.5 },
 };
 
 function calcBarPercent(value, cfg) {
