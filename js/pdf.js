@@ -92,7 +92,7 @@ const PDF = {
           pdf.link(link.x, link.y, link.w, link.h, { url: link.url });
         });
       })
-      .save()
+      .save(filename)
       .then(() => {
         document.body.removeChild(cardEl);
         exportBtns.forEach(b => { b.disabled = false; b.textContent = 'Export PDF'; });
