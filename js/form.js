@@ -24,6 +24,7 @@ const Form = {
   partnerLogoBase64: null,
   photoPositionY:    0,    // 0–100 vertical object-position %
   previewTimer:      null,
+  selectedScoutTraits: new Set(),
 
   // ── Initialization ────────────────────────────────────────
 
@@ -98,6 +99,31 @@ const Form = {
 
     // Build the interactive pitch
     Form.buildPitchSelector();
+
+    // Scout builder — trait selector + generate/clear
+    Form.buildTraitSelector();
+
+    document.getElementById('scout-trait-categories').addEventListener('click', e => {
+      // Category header toggle
+      const header = e.target.closest('.trait-category-header');
+      if (header) {
+        header.parentElement.classList.toggle('open');
+        return;
+      }
+      // Chip toggle
+      const chip = e.target.closest('.trait-chip');
+      if (chip) {
+        Form.toggleScoutTrait(chip.dataset.trait);
+      }
+    });
+
+    document.getElementById('btn-generate-desc').addEventListener('click', () => {
+      Form.generateDescription();
+    });
+
+    document.getElementById('btn-clear-traits').addEventListener('click', () => {
+      Form.clearScoutTraits();
+    });
   },
 
   // ── Load player data into form ────────────────────────────
@@ -107,6 +133,8 @@ const Form = {
     Form.photoBase64          = null;
     Form.partnerLogoBase64    = null;
     Form.photoPositionY       = 0;
+    Form.selectedScoutTraits  = new Set();
+    Form.buildTraitSelector();
 
     if (!player) {
       document.getElementById('player-form').reset();
@@ -504,5 +532,72 @@ const Form = {
     document.removeEventListener('mouseup', Form._onRepoEnd);
     document.removeEventListener('touchmove', Form._onRepoMove);
     document.removeEventListener('touchend', Form._onRepoEnd);
+  },
+
+  // ── Scout Builder ────────────────────────────────────────────
+
+  buildTraitSelector() {
+    const container = document.getElementById('scout-trait-categories');
+    if (!container) return;
+
+    let html = '';
+    for (const [catKey, cat] of Object.entries(SCOUT_TRAITS)) {
+      const selectedInCat = Object.keys(cat.traits).filter(t => Form.selectedScoutTraits.has(t)).length;
+      const countBadge = selectedInCat > 0 ? `<span class="trait-category-count">${selectedInCat}</span>` : '';
+
+      html += `<div class="trait-category open">
+        <div class="trait-category-header">
+          <span class="trait-category-chevron">&#9654;</span>
+          <span class="trait-category-label">${cat.label}</span>
+          ${countBadge}
+        </div>
+        <div class="trait-chips">`;
+
+      for (const [traitKey, traitLabel] of Object.entries(cat.traits)) {
+        const sel = Form.selectedScoutTraits.has(traitKey) ? ' trait-chip-selected' : '';
+        html += `<span class="trait-chip${sel}" data-trait="${traitKey}">${traitLabel}</span>`;
+      }
+
+      html += `</div></div>`;
+    }
+    container.innerHTML = html;
+
+    // Update generate button state
+    const btn = document.getElementById('btn-generate-desc');
+    if (btn) btn.disabled = Form.selectedScoutTraits.size === 0;
+  },
+
+  toggleScoutTrait(key) {
+    if (Form.selectedScoutTraits.has(key)) {
+      Form.selectedScoutTraits.delete(key);
+    } else {
+      Form.selectedScoutTraits.add(key);
+    }
+    Form.buildTraitSelector();
+  },
+
+  generateDescription() {
+    if (Form.selectedScoutTraits.size === 0) return;
+
+    const btn = document.getElementById('btn-generate-desc');
+    const textarea = document.getElementById('f-aboutText');
+
+    // If textarea has text, show brief "Overwrite?" confirmation
+    if (textarea.value.trim() && btn.textContent !== 'Overwrite?') {
+      btn.textContent = 'Overwrite?';
+      setTimeout(() => { btn.textContent = 'Generate Description'; }, 2000);
+      return;
+    }
+
+    btn.textContent = 'Generate Description';
+    const playerData = Form.getData();
+    const text = ScoutGenerator.generate(Form.selectedScoutTraits, playerData);
+    textarea.value = text;
+    Form.schedulePreview();
+  },
+
+  clearScoutTraits() {
+    Form.selectedScoutTraits = new Set();
+    Form.buildTraitSelector();
   }
 };

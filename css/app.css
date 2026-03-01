@@ -642,6 +642,119 @@ body {
   will-change: transform;
 }
 
+/* ── Scout Builder / Trait Selector ──────────────────────────── */
+.scout-builder {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--fc-border);
+}
+
+.scout-builder-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--fc-dark);
+  margin-bottom: 4px;
+}
+
+.trait-category {
+  margin-bottom: 10px;
+}
+
+.trait-category-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 5px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.trait-category-header:hover .trait-category-label {
+  color: var(--fc-dark);
+}
+
+.trait-category-chevron {
+  font-size: 10px;
+  color: #999;
+  transition: transform 0.2s;
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.trait-category.open .trait-category-chevron {
+  transform: rotate(90deg);
+}
+
+.trait-category-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--fc-gray);
+  transition: color 0.15s;
+}
+
+.trait-category-count {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--fc-red);
+  margin-left: auto;
+}
+
+.trait-chips {
+  display: none;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 0 4px 20px;
+}
+
+.trait-category.open .trait-chips {
+  display: flex;
+}
+
+.trait-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--fc-border);
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fc-dark);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.trait-chip:hover {
+  border-color: var(--fc-red);
+  background: rgba(227,0,15,0.03);
+}
+
+.trait-chip-selected {
+  background: var(--fc-red);
+  color: #fff;
+  border-color: var(--fc-red);
+}
+
+.trait-chip-selected:hover {
+  background: #c5000d;
+  border-color: #c5000d;
+}
+
+.scout-builder-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  align-items: center;
+}
+
 /* ── Scrollbar styling ───────────────────────────────────────── */
 ::-webkit-scrollbar        { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track  { background: transparent; }
