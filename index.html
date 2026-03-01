@@ -191,26 +191,28 @@
             </div>
           </div>
 
-          <!-- About -->
+          <!-- Player Profile -->
           <div class="form-section">
-            <h3>About the Player</h3>
-            <div class="form-field">
-              <label for="f-aboutText">Scouting Description</label>
-              <textarea id="f-aboutText" rows="5"
-                placeholder="Strengths, playing style, development notes…"></textarea>
-            </div>
+            <h3>Player Profile</h3>
             <div class="scout-builder" id="scout-builder">
-              <h4 class="scout-builder-title">Trait Selector</h4>
-              <p class="form-hint">Select player strengths, then generate a scouting description.</p>
+              <h4 class="scout-builder-title">Key Strengths</h4>
+              <p class="form-hint">Select traits — these appear as bullet points on the card.</p>
               <div id="scout-trait-categories"></div>
               <div class="scout-builder-actions">
-                <button type="button" id="btn-generate-desc" class="btn btn-primary btn-sm" disabled>
-                  Generate Description
-                </button>
                 <button type="button" id="btn-clear-traits" class="btn btn-ghost btn-sm">
                   Clear Traits
                 </button>
               </div>
+            </div>
+            <div class="form-field">
+              <label for="f-playingStyle">Playing Style</label>
+              <textarea id="f-playingStyle" rows="4"
+                placeholder="How this player plays…"></textarea>
+            </div>
+            <div class="scout-builder-actions">
+              <button type="button" id="btn-generate-desc" class="btn btn-primary btn-sm" disabled>
+                Generate Playing Style
+              </button>
             </div>
           </div>
 

@@ -158,9 +158,16 @@ const Form = {
     set('f-heightCm',      player.heightCm);
     set('f-weightKg',      player.weightKg);
     set('f-foot',          player.foot);
-    set('f-aboutText',     player.aboutText);
+    // Backward compat: migrate aboutText → playingStyle
+    const playingStyle = player.playingStyle || player.aboutText || '';
+    set('f-playingStyle',  playingStyle);
     set('f-video1',        player.videoUrls?.[0]);
     set('f-video2',        player.videoUrls?.[1]);
+
+    // Restore strength trait selections
+    if (player.strengths && player.strengths.length) {
+      Form._restoreTraitsFromLabels(player.strengths);
+    }
 
     const t = player.tests || {};
     set('f-cmjCm',       t.cmjCm);
@@ -245,7 +252,8 @@ const Form = {
         sprint30mSec: n('f-sprint30m'),
         sprint40ydSec: n('f-sprint40yd'),
       },
-      aboutText:      g('f-aboutText'),
+      strengths:      Form._getStrengthLabels(),
+      playingStyle:   g('f-playingStyle'),
       positions:      [...Form.selectedPositions],
       videoUrls:      [g('f-video1'), g('f-video2')],
       photoBase64:    Form.photoBase64,
@@ -574,22 +582,23 @@ const Form = {
       Form.selectedScoutTraits.add(key);
     }
     Form.buildTraitSelector();
+    Form.schedulePreview();
   },
 
   generateDescription() {
     if (Form.selectedScoutTraits.size === 0) return;
 
     const btn = document.getElementById('btn-generate-desc');
-    const textarea = document.getElementById('f-aboutText');
+    const textarea = document.getElementById('f-playingStyle');
 
     // If textarea has text, show brief "Overwrite?" confirmation
     if (textarea.value.trim() && btn.textContent !== 'Overwrite?') {
       btn.textContent = 'Overwrite?';
-      setTimeout(() => { btn.textContent = 'Generate Description'; }, 2000);
+      setTimeout(() => { btn.textContent = 'Generate Playing Style'; }, 2000);
       return;
     }
 
-    btn.textContent = 'Generate Description';
+    btn.textContent = 'Generate Playing Style';
     const playerData = Form.getData();
     const text = ScoutGenerator.generate(Form.selectedScoutTraits, playerData);
     textarea.value = text;
@@ -598,6 +607,33 @@ const Form = {
 
   clearScoutTraits() {
     Form.selectedScoutTraits = new Set();
+    Form.buildTraitSelector();
+    Form.schedulePreview();
+  },
+
+  // ── Strengths helpers ──────────────────────────────────────
+
+  /** Convert selected trait keys → array of display labels */
+  _getStrengthLabels() {
+    const labels = [];
+    for (const key of Form.selectedScoutTraits) {
+      for (const cat of Object.values(SCOUT_TRAITS)) {
+        if (key in cat.traits) { labels.push(cat.traits[key]); break; }
+      }
+    }
+    return labels;
+  },
+
+  /** Restore selectedScoutTraits Set from saved label strings */
+  _restoreTraitsFromLabels(labels) {
+    Form.selectedScoutTraits = new Set();
+    for (const label of labels) {
+      for (const cat of Object.values(SCOUT_TRAITS)) {
+        for (const [key, val] of Object.entries(cat.traits)) {
+          if (val === label) { Form.selectedScoutTraits.add(key); break; }
+        }
+      }
+    }
     Form.buildTraitSelector();
   }
 };

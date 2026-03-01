@@ -64,6 +64,93 @@ const SCOUT_TRAITS = {
   }
 };
 
+// ── Short phrases for grouped strength bullets ───────────────
+
+const SHORT_PHRASES = {
+  // Technical
+  ballControl:       'excellent ball control',
+  firstTouch:        'a refined first touch',
+  passingRange:      'impressive passing range',
+  crossing:          'dangerous crossing',
+  dribbling:         'sharp dribbling',
+  finishing:         'clinical finishing',
+  longRangeShooting: 'a powerful long-range shot',
+  setPieces:         'set-piece quality',
+  // Mental
+  gameReading:       'reads the game well',
+  positioning:       'intelligent positioning',
+  leadership:        'natural leadership',
+  composure:         'composure under pressure',
+  workRate:          'a relentless work rate',
+  creativity:        'creative vision',
+  decisionMaking:    'mature decision-making',
+  // Physical
+  pace:              'explosive pace',
+  power:             'physical power',
+  agility:           'sharp agility',
+  stamina:           'excellent stamina',
+  explosiveness:     'dynamic explosiveness',
+  balance:           'outstanding balance',
+  aerialPresence:    'aerial dominance',
+  // Defensive
+  tackling:          'strong tackling',
+  marking:           'disciplined marking',
+  interceptions:     'sharp interceptions',
+  oneVOneDefending:  'solid 1v1 defending',
+  // Character
+  coachable:         'highly coachable',
+  highCeiling:       'high development ceiling',
+  competitiveMentality: 'fierce competitor',
+  versatile:         'tactical versatility',
+  teamPlayer:        'selfless team player',
+};
+
+// ── Build grouped strength bullet sentences ──────────────────
+
+function buildStrengthBullets(labels) {
+  if (!labels || !labels.length) return [];
+
+  // Build reverse lookup: label → { key, category }
+  const labelToInfo = {};
+  const categoryOrder = ['technical', 'mental', 'physical', 'defensive', 'character'];
+  for (const catKey of categoryOrder) {
+    const cat = SCOUT_TRAITS[catKey];
+    for (const [traitKey, traitLabel] of Object.entries(cat.traits)) {
+      labelToInfo[traitLabel] = { key: traitKey, category: catKey };
+    }
+  }
+
+  // Group selected labels by category
+  const groups = {};
+  for (const label of labels) {
+    const info = labelToInfo[label];
+    if (!info) continue;
+    if (!groups[info.category]) groups[info.category] = [];
+    groups[info.category].push(info.key);
+  }
+
+  // Build one sentence per category (in order)
+  const bullets = [];
+  for (const cat of categoryOrder) {
+    const keys = groups[cat];
+    if (!keys || !keys.length) continue;
+
+    const phrases = keys.map(k => SHORT_PHRASES[k] || k);
+    let sentence;
+    if (phrases.length === 1) {
+      sentence = phrases[0];
+    } else if (phrases.length === 2) {
+      sentence = phrases[0] + ' and ' + phrases[1];
+    } else {
+      sentence = phrases.slice(0, -1).join(', ') + ', and ' + phrases[phrases.length - 1];
+    }
+    // Capitalize first letter
+    bullets.push(sentence.charAt(0).toUpperCase() + sentence.slice(1));
+  }
+
+  return bullets;
+}
+
 // ── Position-aware role descriptors ────────────────────────────
 
 const ROLE_MAP = {
@@ -221,15 +308,11 @@ const ScoutGenerator = {
     // 1. Opening sentence — position-aware
     sentences.push(ScoutGenerator._buildOpener(firstName, playerData, seed));
 
-    // 2. Trait sentences — grouped by category
-    const traitSentences = ScoutGenerator._buildTraitSentences(selectedTraits, seed);
-    sentences.push(...traitSentences);
+    // 2. Style description — how the player uses their key traits
+    const styleSentence = ScoutGenerator._buildStyleDescription(selectedTraits, firstName, seed);
+    if (styleSentence) sentences.push(styleSentence);
 
-    // 3. Athletic qualifier (auto from test data)
-    const athleticSentence = buildAthleticSentence(playerData.tests, seed);
-    if (athleticSentence) sentences.push(athleticSentence);
-
-    // 4. Closing sentence
+    // 3. Closing sentence
     sentences.push(ScoutGenerator._buildCloser(selectedTraits, seed));
 
     return sentences.filter(Boolean).join(' ');
@@ -263,68 +346,46 @@ const ScoutGenerator = {
     return parts[0];
   },
 
-  _buildTraitSentences(selectedTraits, seed) {
-    // Group traits by category
-    const grouped = {};
+  _buildStyleDescription(selectedTraits, firstName, seed) {
+    // Group selected traits by category
+    const counts = { technical: 0, mental: 0, physical: 0, defensive: 0 };
     for (const traitKey of selectedTraits) {
       const cat = ScoutGenerator._findCategory(traitKey);
-      if (!cat) continue;
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(traitKey);
+      if (cat && cat in counts) counts[cat]++;
     }
 
-    // Cap at ~8 traits total, prioritizing technical > mental > physical > defensive
-    // Character traits are handled separately via the closer sentence
-    const priority = ['technical', 'mental', 'physical', 'defensive'];
-    let totalUsed = 0;
-    const maxTraits = 8;
-    const capped = {};
-    for (const cat of priority) {
-      if (!grouped[cat]) continue;
-      const available = Math.min(grouped[cat].length, maxTraits - totalUsed);
-      if (available <= 0) break;
-      capped[cat] = grouped[cat].slice(0, available);
-      totalUsed += available;
-    }
+    // Determine dominant category
+    const dominant = Object.entries(counts)
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1])[0];
+    if (!dominant) return null;
 
-    const sentences = [];
-    const openers = [
-      'Demonstrates', 'Combines', 'Shows', 'Brings', 'Possesses', 'Displays', 'Offers',
-    ];
-    let openerIdx = seed % openers.length;
+    // Style templates per dominant category
+    const STYLE_TEMPLATES = {
+      technical: [
+        'Technically gifted, he controls the tempo and creates chances through individual quality.',
+        'Comfortable receiving under pressure, he progresses play through combination play and skill on the ball.',
+        'His technical ability sets him apart — he delivers quality in tight spaces and the final third.',
+      ],
+      mental: [
+        'Reads the game beyond his years, finding space and making smart decisions under pressure.',
+        'Tactically aware and composed, he positions himself to influence play at key moments.',
+        'His game intelligence gives him an edge — he processes play quickly and picks the right option.',
+      ],
+      physical: [
+        'Uses his athleticism to dominate in transition, covering ground quickly and competing hard in duels.',
+        'A physically dynamic player who sets the tone with pace, power, and relentless intensity.',
+        'His physical profile gives him an advantage in open spaces where he can press high and attack.',
+      ],
+      defensive: [
+        'Reads danger early and cuts out attacks before they develop, providing a reliable defensive foundation.',
+        'Strong in the tackle and positionally disciplined, he wins the ball back and distributes cleanly.',
+        'Combines strong 1v1 defending with the awareness to cover for teammates and organize the back line.',
+      ],
+    };
 
-    for (const cat of priority) {
-      if (!capped[cat] || !capped[cat].length) continue;
-      const traits = capped[cat];
-
-      // Pick phrase variant for each trait
-      const phrases = traits.map((t, i) => {
-        const pool = PHRASE_POOLS[t];
-        if (!pool) return SCOUT_TRAITS[cat]?.traits[t] || t;
-        return pool[(seed + i) % pool.length];
-      });
-
-      // Build compound sentence (2-3 per sentence)
-      for (let i = 0; i < phrases.length; i += 3) {
-        const chunk = phrases.slice(i, i + 3);
-        const opener = openers[openerIdx % openers.length];
-        openerIdx++;
-
-        let sentence;
-        if (chunk.length === 1) {
-          sentence = `${opener} ${chunk[0]}.`;
-        } else if (chunk.length === 2) {
-          sentence = `${opener} ${chunk[0]} and ${chunk[1]}.`;
-        } else {
-          sentence = `${opener} ${chunk[0]}, ${chunk[1]}, and ${chunk[2]}.`;
-        }
-        // Capitalize first letter of the sentence
-        sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1);
-        sentences.push(sentence);
-      }
-    }
-
-    return sentences;
+    const templates = STYLE_TEMPLATES[dominant[0]];
+    return templates[seed % templates.length];
   },
 
   _buildCloser(selectedTraits, seed) {

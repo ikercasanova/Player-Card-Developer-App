@@ -294,12 +294,24 @@ function buildCard(player) {
       ${buildTestsHTML(tests)}
     </div>
 
-    <!-- ── 5. ABOUT THE PLAYER ─────────────────────────────── -->
+    <!-- ── 5. PLAYER PROFILE ──────────────────────────────── -->
     <div class="card-section-block card-about-block">
-      <div class="card-section-title">ABOUT THE PLAYER</div>
-      <div class="card-about-text">${player.aboutText
-        ? player.aboutText.replace(/\n/g, '<br>')
-        : '<span style="color:#aaa;font-style:italic;">—</span>'}</div>
+      <div class="card-section-title">PLAYER PROFILE</div>
+      <div class="card-about-inner">
+        <div class="card-strengths-col">
+          <div class="card-col-heading">KEY STRENGTHS</div>
+          ${player.strengths && player.strengths.length
+            ? `<ul class="card-strengths-list">${buildStrengthBullets(player.strengths).map(s =>
+                `<li class="card-strength-item">${s}</li>`).join('')}</ul>`
+            : '<span class="card-empty-dash">—</span>'}
+        </div>
+        <div class="card-style-col">
+          <div class="card-col-heading">PLAYING STYLE</div>
+          <div class="card-about-text">${player.playingStyle
+            ? player.playingStyle.replace(/\n/g, '<br>')
+            : '<span class="card-empty-dash">—</span>'}</div>
+        </div>
+      </div>
     </div>
 
     <!-- ── 6. BOTTOM ROW ───────────────────────────────────── -->

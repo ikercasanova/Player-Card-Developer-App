@@ -491,6 +491,69 @@
   pointer-events: none;
 }
 
+/* Two-column inner layout: strengths | playing style */
+.card-about-inner {
+  display: flex;
+  gap: 0;
+  height: 100%;
+}
+
+.card-col-heading {
+  font-family: var(--bc);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.card-strengths-col {
+  width: 35%;
+  flex-shrink: 0;
+  border-right: 1px solid #E0E0E0;
+  padding-right: 16px;
+}
+
+.card-strengths-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card-strength-item {
+  font-family: var(--bc);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+
+.card-strength-item::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  flex-shrink: 0;
+}
+
+.card-style-col {
+  flex: 1;
+  min-width: 0;
+  padding-left: 16px;
+}
+
+.card-empty-dash {
+  color: #aaa;
+  font-style: italic;
+  font-size: 12px;
+}
+
 .card-about-text {
   font-size: 12.5px;
   line-height: 1.72;
