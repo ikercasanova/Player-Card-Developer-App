@@ -234,8 +234,9 @@ function buildCard(player) {
        </div>`
     : '';
 
+  const posY = player.photoPositionY != null ? player.photoPositionY : 0;
   const photoContent = player.photoBase64
-    ? `<img src="${player.photoBase64}" class="card-photo" alt="Player Photo">`
+    ? `<img src="${player.photoBase64}" class="card-photo" alt="Player Photo" style="object-position: center ${posY}%">`
     : `<div class="card-photo-placeholder">
         <svg width="44" height="44" viewBox="0 0 40 40" fill="none">
           <circle cx="20" cy="14" r="9" fill="#ccc"/>

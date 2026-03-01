@@ -22,6 +22,7 @@ const Form = {
   selectedPositions: [],   // [{rank, code}]
   photoBase64:       null,
   partnerLogoBase64: null,
+  photoPositionY:    0,    // 0–100 vertical object-position %
   previewTimer:      null,
 
   // ── Initialization ────────────────────────────────────────
@@ -32,13 +33,38 @@ const Form = {
       if (e.target.files[0]) {
         Form.resizeImage(e.target.files[0], 800, b64 => {
           Form.photoBase64 = b64;
+          Form.photoPositionY = 0; // reset position for new photo
           const img = document.getElementById('photo-preview');
           img.src = b64;
           img.style.display = 'block';
           document.querySelector('#photo-upload-area .upload-placeholder').style.display = 'none';
+          document.getElementById('photo-actions').style.display = '';
           Form.schedulePreview();
         });
       }
+    });
+
+    // Photo action buttons
+    document.getElementById('btn-change-photo').addEventListener('click', () => {
+      document.getElementById('f-photo').click();
+    });
+
+    document.getElementById('btn-delete-photo').addEventListener('click', () => {
+      Form._resetPhotoUI();
+      Form.schedulePreview();
+    });
+
+    document.getElementById('btn-reposition-photo').addEventListener('click', () => {
+      Form.openRepositionOverlay();
+    });
+
+    // Reposition overlay buttons
+    document.getElementById('btn-repo-cancel').addEventListener('click', () => {
+      Form.closeRepositionOverlay(false);
+    });
+
+    document.getElementById('btn-repo-done').addEventListener('click', () => {
+      Form.closeRepositionOverlay(true);
     });
 
     // Partner logo upload — use PNG to preserve transparency
@@ -80,6 +106,7 @@ const Form = {
     Form.selectedPositions    = [];
     Form.photoBase64          = null;
     Form.partnerLogoBase64    = null;
+    Form.photoPositionY       = 0;
 
     if (!player) {
       document.getElementById('player-form').reset();
@@ -114,12 +141,14 @@ const Form = {
     set('f-sprint40yd',  t.sprint40ydSec);
 
     // Photo
+    Form.photoPositionY = player.photoPositionY ?? 0;
     if (player.photoBase64) {
       Form.photoBase64 = player.photoBase64;
       const img = document.getElementById('photo-preview');
       img.src = player.photoBase64;
       img.style.display = 'block';
       document.querySelector('#photo-upload-area .upload-placeholder').style.display = 'none';
+      document.getElementById('photo-actions').style.display = '';
     } else {
       Form._resetPhotoUI();
     }
@@ -146,11 +175,15 @@ const Form = {
 
   _resetPhotoUI() {
     Form.photoBase64 = null;
+    Form.photoPositionY = 0;
     const img = document.getElementById('photo-preview');
     img.style.display = 'none';
     img.src = '';
     const ph = document.querySelector('#photo-upload-area .upload-placeholder');
     if (ph) ph.style.display = '';
+    document.getElementById('photo-actions').style.display = 'none';
+    // Reset file input so the same file can be re-selected
+    document.getElementById('f-photo').value = '';
   },
 
   _resetLogoUI() {
@@ -188,6 +221,7 @@ const Form = {
       positions:      [...Form.selectedPositions],
       videoUrls:      [g('f-video1'), g('f-video2')],
       photoBase64:    Form.photoBase64,
+      photoPositionY: Form.photoPositionY ?? 0,
       partnerLogoBase64: Form.partnerLogoBase64,
     };
   },
@@ -359,5 +393,116 @@ const Form = {
     container.querySelectorAll('.sel-pos-remove').forEach(btn => {
       btn.addEventListener('click', e => Form.togglePosition(e.currentTarget.dataset.code));
     });
+  },
+
+  // ── Drag-to-reposition overlay ──────────────────────────────
+
+  _repoDragState: null,
+
+  openRepositionOverlay() {
+    if (!Form.photoBase64) return;
+
+    const overlay = document.getElementById('photo-reposition-overlay');
+    const img = document.getElementById('reposition-img');
+    img.src = Form.photoBase64;
+
+    // We need to wait for the image to load so we know its natural dimensions
+    img.onload = () => {
+      const frame = document.getElementById('reposition-frame');
+      const frameH = frame.clientHeight; // 240px
+      const frameW = frame.clientWidth;  // 240px
+
+      // Image is displayed at frame width, compute displayed height
+      const displayedH = (img.naturalHeight / img.naturalWidth) * frameW;
+
+      // Maximum drag range: how far the image can move vertically
+      const maxOffset = Math.max(0, displayedH - frameH);
+
+      // Set initial position from current photoPositionY
+      const initialOffset = -(Form.photoPositionY / 100) * maxOffset;
+      img.style.transform = `translateY(${initialOffset}px)`;
+
+      Form._repoDragState = {
+        maxOffset,
+        currentOffset: initialOffset,
+        dragging: false,
+        startY: 0,
+        startOffset: 0,
+      };
+    };
+
+    overlay.style.display = '';
+
+    // Attach drag listeners to the frame
+    const frame = document.getElementById('reposition-frame');
+    frame.addEventListener('mousedown', Form._onRepoStart);
+    frame.addEventListener('touchstart', Form._onRepoStart, { passive: false });
+  },
+
+  closeRepositionOverlay(save) {
+    const overlay = document.getElementById('photo-reposition-overlay');
+    overlay.style.display = 'none';
+
+    if (save && Form._repoDragState) {
+      // Convert current offset to 0–100 percentage
+      const { maxOffset, currentOffset } = Form._repoDragState;
+      if (maxOffset > 0) {
+        Form.photoPositionY = Math.round((-currentOffset / maxOffset) * 100);
+      } else {
+        Form.photoPositionY = 0;
+      }
+      Form.schedulePreview();
+    }
+
+    // Clean up listeners
+    const frame = document.getElementById('reposition-frame');
+    frame.removeEventListener('mousedown', Form._onRepoStart);
+    frame.removeEventListener('touchstart', Form._onRepoStart);
+    document.removeEventListener('mousemove', Form._onRepoMove);
+    document.removeEventListener('mouseup', Form._onRepoEnd);
+    document.removeEventListener('touchmove', Form._onRepoMove);
+    document.removeEventListener('touchend', Form._onRepoEnd);
+    Form._repoDragState = null;
+  },
+
+  _onRepoStart(e) {
+    e.preventDefault();
+    const state = Form._repoDragState;
+    if (!state) return;
+
+    state.dragging = true;
+    state.startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+    state.startOffset = state.currentOffset;
+
+    document.addEventListener('mousemove', Form._onRepoMove);
+    document.addEventListener('mouseup', Form._onRepoEnd);
+    document.addEventListener('touchmove', Form._onRepoMove, { passive: false });
+    document.addEventListener('touchend', Form._onRepoEnd);
+  },
+
+  _onRepoMove(e) {
+    e.preventDefault();
+    const state = Form._repoDragState;
+    if (!state || !state.dragging) return;
+
+    const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    const delta = clientY - state.startY;
+    // Clamp: offset is negative (image slides up), range [-maxOffset, 0]
+    let newOffset = state.startOffset + delta;
+    newOffset = Math.min(0, Math.max(-state.maxOffset, newOffset));
+    state.currentOffset = newOffset;
+
+    const img = document.getElementById('reposition-img');
+    img.style.transform = `translateY(${newOffset}px)`;
+  },
+
+  _onRepoEnd() {
+    const state = Form._repoDragState;
+    if (state) state.dragging = false;
+
+    document.removeEventListener('mousemove', Form._onRepoMove);
+    document.removeEventListener('mouseup', Form._onRepoEnd);
+    document.removeEventListener('touchmove', Form._onRepoMove);
+    document.removeEventListener('touchend', Form._onRepoEnd);
   }
 };

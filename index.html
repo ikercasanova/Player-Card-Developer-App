@@ -99,6 +99,11 @@
                   </div>
                   <img id="photo-preview" src="" style="display:none" alt="Photo preview">
                 </div>
+                <div class="photo-actions" id="photo-actions" style="display:none">
+                  <button type="button" id="btn-change-photo" class="btn btn-ghost btn-sm">Change photo</button>
+                  <button type="button" id="btn-delete-photo" class="btn btn-ghost btn-sm">Delete photo</button>
+                  <button type="button" id="btn-reposition-photo" class="btn btn-ghost btn-sm">Reposition</button>
+                </div>
               </div>
               <div class="form-field">
                 <label>Partner Logo <span style="font-weight:400;text-transform:none">(optional)</span></label>
@@ -269,6 +274,23 @@
     </div>
     <div class="preview-container">
       <div id="standalone-card-preview"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PHOTO REPOSITION MODAL
+  ══════════════════════════════════════════════════════════ -->
+  <div id="photo-reposition-overlay" class="modal-overlay" style="display:none">
+    <div class="reposition-modal">
+      <h3>Reposition Photo</h3>
+      <p class="form-hint">Drag up or down to adjust framing</p>
+      <div class="reposition-frame" id="reposition-frame">
+        <img id="reposition-img" src="" alt="Reposition" draggable="false">
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="btn-repo-cancel" class="btn btn-ghost">Cancel</button>
+        <button type="button" id="btn-repo-done" class="btn btn-primary">Done</button>
+      </div>
     </div>
   </div>
 
