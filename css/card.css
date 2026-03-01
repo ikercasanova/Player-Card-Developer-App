@@ -611,6 +611,62 @@
   white-space: nowrap;
 }
 
+/* Generated video thumbnail — used for Veo / non-YouTube links */
+.card-video-thumb-gen {
+  width: 100%;
+  height: 115px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #111 0%, #2a0005 60%, #4a000a 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-video-thumb-gen--game {
+  background: linear-gradient(135deg, #0a0a14 0%, #111 50%, #1a0005 100%);
+}
+
+.card-video-thumb-icon {
+  font-size: 18px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.card-video-thumb-gen-title {
+  font-family: var(--bc);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.card-video-thumb-gen-name {
+  font-family: var(--bc);
+  font-size: 8px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 2px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.card-video-thumb-gen-source {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-family: var(--bc);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.3);
+  text-transform: lowercase;
+}
+
 .card-no-videos {
   display: flex;
   flex-direction: column;

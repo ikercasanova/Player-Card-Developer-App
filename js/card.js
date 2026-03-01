@@ -188,8 +188,12 @@ function getYouTubeInfo(url) {
   return null;
 }
 
-function buildVideosHTML(urls) {
-  if (!urls || !urls.filter(u => u && u.trim()).length) {
+function buildVideosHTML(urls, playerName) {
+  const url1 = urls?.[0]?.trim() || '';
+  const url2 = urls?.[1]?.trim() || '';
+  const name = (playerName || '').toUpperCase();
+
+  if (!url1 && !url2) {
     return `<div class="card-no-videos">
       <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="1" y="5" width="22" height="16" rx="2" stroke="#ddd" stroke-width="1.5" fill="none"/>
@@ -198,17 +202,50 @@ function buildVideosHTML(urls) {
       <span>No video links added</span>
     </div>`;
   }
-  return urls.filter(u => u && u.trim()).map(url => {
-    const yt = getYouTubeInfo(url);
+
+  let html = '';
+
+  // Slot 1: Highlight Video
+  if (url1) {
+    const yt = getYouTubeInfo(url1);
     if (yt) {
-      return `<div class="card-video-item">
-          <img src="${yt.thumb}" class="card-video-thumb" alt="Video"
-            onerror="this.style.display='none';this.nextElementSibling.textContent='▶ Watch Video'">
-          <div class="card-video-label">▶ Watch Video</div>
+      html += `<div class="card-video-item" data-url="${url1}">
+          <img src="${yt.thumb}" class="card-video-thumb" alt="Highlight Video"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="card-video-thumb-gen" style="display:none">
+            <div class="card-video-thumb-icon">&#9654;</div>
+            <div class="card-video-thumb-gen-title">HIGHLIGHT</div>
+            <div class="card-video-thumb-gen-name">${name}</div>
+          </div>
+          <div class="card-video-label">&#9654; Highlight Video</div>
+        </div>`;
+    } else {
+      html += `<div class="card-video-item" data-url="${url1}">
+          <div class="card-video-thumb-gen">
+            <div class="card-video-thumb-icon">&#9654;</div>
+            <div class="card-video-thumb-gen-title">HIGHLIGHT</div>
+            <div class="card-video-thumb-gen-name">${name}</div>
+          </div>
+          <div class="card-video-label" title="${url1}">&#9654; Highlight Video</div>
         </div>`;
     }
-    return `<div class="card-video-item"><div class="card-video-label" title="${url}">▶ ${url}</div></div>`;
-  }).join('');
+  }
+
+  // Slot 2: Full Game
+  if (url2) {
+    const isVeo = /app\.veo\.co/i.test(url2);
+    html += `<div class="card-video-item" data-url="${url2}">
+        <div class="card-video-thumb-gen card-video-thumb-gen--game">
+          <div class="card-video-thumb-icon">&#9654;</div>
+          <div class="card-video-thumb-gen-title">FULL GAME</div>
+          <div class="card-video-thumb-gen-name">${name}</div>
+          ${isVeo ? '<div class="card-video-thumb-gen-source">veo</div>' : ''}
+        </div>
+        <div class="card-video-label" title="${url2}">&#9654; Full Game${isVeo ? ' · Veo' : ''}</div>
+      </div>`;
+  }
+
+  return html;
 }
 
 function buildPositionPills(positions) {
@@ -318,7 +355,7 @@ function buildCard(player) {
     <div class="card-bottom-row">
       <div class="card-videos-cell">
         <div class="card-section-title">VIDEOS</div>
-        <div class="card-videos-content">${buildVideosHTML(player.videoUrls)}</div>
+        <div class="card-videos-content">${buildVideosHTML(player.videoUrls, `${player.firstName || ''} ${player.lastName || ''}`.trim())}</div>
       </div>
       <div class="card-position-cell">
         <div class="card-section-title">POSITION</div>
