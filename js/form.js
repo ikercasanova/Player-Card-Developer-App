@@ -41,7 +41,7 @@ const Form = {
       }
     });
 
-    // Partner logo upload
+    // Partner logo upload — use PNG to preserve transparency
     document.getElementById('f-partnerLogo').addEventListener('change', e => {
       if (e.target.files[0]) {
         Form.resizeImage(e.target.files[0], 400, b64 => {
@@ -52,7 +52,7 @@ const Form = {
           document.querySelector('#logo-upload-area .upload-placeholder').style.display = 'none';
           document.getElementById('btn-clear-logo').style.display = 'inline-flex';
           Form.schedulePreview();
-        });
+        }, 'image/png');
       }
     });
 
@@ -97,7 +97,6 @@ const Form = {
 
     set('f-firstName',     player.firstName);
     set('f-lastName',      player.lastName);
-    set('f-jerseyNumber',  player.jerseyNumber);
     set('f-nationality',   player.nationality);
     set('f-passportCountry', player.passportCountry);
     set('f-dateOfBirth',   player.dateOfBirth);
@@ -137,8 +136,10 @@ const Form = {
       Form._resetLogoUI();
     }
 
-    // Positions
-    Form.selectedPositions = player.positions ? [...player.positions] : [];
+    // Positions — normalize strings to {rank, code} objects
+    Form.selectedPositions = (player.positions || []).map((p, i) =>
+      typeof p === 'string' ? { rank: i + 1, code: p } : p
+    );
     Form.buildPitchSelector();
     Form.renderSelectedPositions();
   },
@@ -171,7 +172,6 @@ const Form = {
     return {
       firstName:      g('f-firstName'),
       lastName:       g('f-lastName'),
-      jerseyNumber:   document.getElementById('f-jerseyNumber')?.value || null,
       nationality:    g('f-nationality'),
       passportCountry: g('f-passportCountry'),
       dateOfBirth:    g('f-dateOfBirth'),
@@ -224,7 +224,7 @@ const Form = {
 
   // ── Image resizing ────────────────────────────────────────
 
-  resizeImage(file, maxSize, callback) {
+  resizeImage(file, maxSize, callback, format = 'image/jpeg') {
     const reader = new FileReader();
     reader.onload = e => {
       const img = new Image();
@@ -243,7 +243,7 @@ const Form = {
         canvas.width  = width;
         canvas.height = height;
         canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        callback(canvas.toDataURL('image/jpeg', 0.85));
+        callback(format === 'image/png' ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.85));
       };
       img.src = e.target.result;
     };
@@ -277,7 +277,7 @@ const Form = {
 
       let fillColor, strokeColor, textColor;
       if (isPrimary) {
-        fillColor   = '#E3000F';
+        fillColor   = '#ED1C24';
         strokeColor = 'rgba(255,255,255,0.9)';
         textColor   = 'white';
       } else if (isSelected) {
@@ -302,7 +302,7 @@ const Form = {
     }
 
     const stripes = [0,1,2,3,4,5,6,7,8,9].map(i =>
-      `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0f0f0f' : '#131313'}"/>`
+      `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0d1a0d' : '#112211'}"/>`
     ).join('');
 
     return `<svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"

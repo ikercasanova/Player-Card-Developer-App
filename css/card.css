@@ -5,7 +5,7 @@
 ═══════════════════════════════════════════════════════════════ */
 
 :root {
-  --red:    #E3000F;
+  --red:    #ED1C24;
   --dark:   #111111;
   --mid:    #2a0005;
   --text:   #1A1A1A;
@@ -35,7 +35,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 5px;
   background: var(--red);
   z-index: 10;
   pointer-events: none;
@@ -46,7 +46,7 @@
 ═══════════════════════════════════════════════════════════════ */
 .card-header {
   /* Dark left fades into FC red — logo pops on the dark side */
-  background: linear-gradient(110deg, #111 0%, #2a0005 42%, #E3000F 100%);
+  background: linear-gradient(110deg, #111 0%, #2a0005 42%, #ED1C24 100%);
   color: #fff;
   padding: 0 20px 0 0;
   display: flex;
@@ -142,43 +142,29 @@
   letter-spacing: -1px;
 }
 
-/* ── Partner Club Badge ──────────────────────────────────────── */
-.card-header-right {
-  flex-shrink: 0;
+/* ── Partner Logo (in contact cell) ─────────────────────────── */
+.card-partner-in-contact {
+  margin-top: auto;
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 4px;
-  padding: 14px 0 14px 20px;
-  border-left: 1px solid rgba(255,255,255,0.12);
 }
 
-.partner-badge-label {
+.partner-contact-label {
   font-family: var(--bc);
   font-size: 6.5px;
   font-weight: 700;
   letter-spacing: 2.5px;
-  color: rgba(255,255,255,0.45);
+  color: #bbb;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 
-.partner-logo-box {
-  background: #fff;
-  border-radius: 3px;
-  padding: 6px 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 96px;
-  min-height: 48px;
-}
-
-.header-partner-logo {
-  height: 40px;
+.partner-contact-logo {
+  max-height: 36px;
+  max-width: 100px;
   width: auto;
-  max-width: 110px;
   object-fit: contain;
 }
 
@@ -187,13 +173,13 @@
 ═══════════════════════════════════════════════════════════════ */
 .card-bio-row {
   display: flex;
-  height: 192px;
+  height: 240px;
   flex-shrink: 0;
   border-bottom: 1px solid var(--border);
 }
 
 .card-photo-cell {
-  width: 172px;
+  width: 240px;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -208,7 +194,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center 10%;
   display: block;
 }
 
@@ -227,7 +213,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 72px;
+  height: 90px;
   background: linear-gradient(transparent, rgba(150,0,8,0.5));
   pointer-events: none;
 }
@@ -235,7 +221,7 @@
 /* ── Section title — universal ──────────────────────────────── */
 .card-section-title {
   font-family: var(--bc);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -254,7 +240,7 @@
 }
 
 .card-contact-cell {
-  width: 178px;
+  width: 140px;
   flex-shrink: 0;
   padding: 14px 16px;
   border-left: 1px solid var(--border);
@@ -270,12 +256,12 @@
 }
 
 .card-info-table tr {
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #EAEAEA;
 }
 .card-info-table tr:last-child { border-bottom: none; }
 
 .card-info-table td {
-  padding: 7px 0;
+  padding: 5px 0;
   vertical-align: middle;
 }
 
@@ -301,7 +287,7 @@
 /* Contact */
 .card-contact-name {
   font-family: var(--bc);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 2px;
@@ -319,7 +305,7 @@
 }
 
 .card-contact-org {
-  font-size: 9.5px;
+  font-size: 9px;
   color: #666;
   line-height: 1.7;
 }
@@ -365,7 +351,7 @@
   text-align: center;
   font-family: var(--bc);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text);
   border-right: 1px solid #EBEBEB;
   letter-spacing: 0.3px;
@@ -437,7 +423,7 @@
 
 .test-bar-track {
   flex: 1;
-  height: 12px;
+  height: 14px;
   background: #F0F0F0;
   border-radius: 2px;
   position: relative;
@@ -480,6 +466,7 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  position: relative;
   background: #F9F9F9;
   /* Subtle diagonal line texture makes the white space look intentional */
   background-image: repeating-linear-gradient(
@@ -489,6 +476,19 @@
     rgba(0,0,0,0.018) 24px,
     rgba(0,0,0,0.018) 25px
   );
+}
+
+/* FC Köln crest watermark — fills empty space when about text is short */
+.card-about-block::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  right: 18px;
+  width: 120px;
+  height: 120px;
+  background: url('../assets/logos/koln-fs.webp') center / contain no-repeat;
+  opacity: 0.06;
+  pointer-events: none;
 }
 
 .card-about-text {
@@ -585,7 +585,7 @@
   justify-content: center;
   border-radius: 6px;
   overflow: hidden;
-  background: #0f0f0f;
+  background: #0d1a0d;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
 }
 
@@ -629,12 +629,24 @@
 .card-footer {
   background: var(--dark);
   color: rgba(255,255,255,0.5);
-  text-align: center;
   font-family: var(--bc);
   font-size: 7.5px;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  padding: 9px;
+  padding: 11px 14px;
   flex-shrink: 0;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   8. PRINT
+═══════════════════════════════════════════════════════════════ */
+@media print {
+  .player-card,
+  .player-card * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
 }

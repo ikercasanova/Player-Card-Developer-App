@@ -35,7 +35,7 @@ function calcBenchmarkPercent(cfg) {
 
 function buildTestsHTML(tests) {
   const legend = `<div class="test-bars-legend">
-    <span class="test-legend-item"><span class="test-legend-swatch" style="background:#E3000F"></span>Player</span>
+    <span class="test-legend-item"><span class="test-legend-swatch" style="background:#ED1C24"></span>Player</span>
     <span class="test-legend-item"><span class="test-legend-swatch" style="background:#888"></span>US College Avg</span>
   </div>`;
 
@@ -125,9 +125,9 @@ function val(v) {
 // ── Pitch SVG ─────────────────────────────────────────────────
 
 function buildPitchSVG(positions) {
-  // Dark alternating stripes — subtle, elegant
+  // Dark green alternating stripes — football field aesthetic
   const stripes = [0,1,2,3,4,5,6,7,8,9].map(i =>
-    `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0f0f0f' : '#131313'}"/>`
+    `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0d1a0d' : '#112211'}"/>`
   ).join('');
 
   const markings = `
@@ -151,16 +151,17 @@ function buildPitchSVG(positions) {
     `<circle cx="${c.cx}" cy="${c.cy}" r="4.5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>`
   ).join('');
 
-  // Selected positions
+  // Selected positions — normalize strings to {code} objects
   let selected = '';
   if (positions && positions.length > 0) {
-    positions.forEach((pos, i) => {
+    positions.forEach((rawPos, i) => {
+      const pos = typeof rawPos === 'string' ? { code: rawPos } : rawPos;
       const c = POSITION_COORDS[pos.code];
       if (!c) return;
       if (i === 0) {
         // Primary: solid red with white outline glow
         selected += `
-          <circle cx="${c.cx}" cy="${c.cy}" r="7" fill="#E3000F" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
+          <circle cx="${c.cx}" cy="${c.cy}" r="7" fill="#ED1C24" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
           <text x="${c.cx}" y="${c.cy + 0.5}" text-anchor="middle" dominant-baseline="middle"
             fill="white" font-size="3.8" font-weight="bold" font-family="Arial,sans-serif">${pos.code}</text>`;
       } else {
@@ -212,9 +213,10 @@ function buildVideosHTML(urls) {
 
 function buildPositionPills(positions) {
   if (!positions || !positions.length) return '';
-  return positions.map((p, i) =>
-    `<span class="card-pos-pill ${i === 0 ? 'card-pos-pill-primary' : 'card-pos-pill-secondary'}">${p.code}</span>`
-  ).join('');
+  return positions.map((p, i) => {
+    const code = typeof p === 'string' ? p : p.code;
+    return `<span class="card-pos-pill ${i === 0 ? 'card-pos-pill-primary' : 'card-pos-pill-secondary'}">${code}</span>`;
+  }).join('');
 }
 
 // ── Main buildCard ────────────────────────────────────────────
@@ -223,16 +225,12 @@ function buildCard(player) {
   const card = document.createElement('div');
   card.className = 'player-card';
 
-  const jerseyWatermark = player.jerseyNumber
-    ? `<span class="header-jersey-watermark">${player.jerseyNumber}</span>` : '';
 
-  // Partner logo: clean "PARTNER CLUB" sponsor badge — handles logos with any background
-  const partnerLogoHTML = player.partnerLogoBase64
-    ? `<div class="card-header-right">
-        <span class="partner-badge-label">PARTNER CLUB</span>
-        <div class="partner-logo-box">
-          <img src="${player.partnerLogoBase64}" class="header-partner-logo" alt="Partner Logo">
-        </div>
+  // Partner logo: shown at bottom of contact cell
+  const partnerLogoContactHTML = player.partnerLogoBase64
+    ? `<div class="card-partner-in-contact">
+        <span class="partner-contact-label">PARTNER</span>
+        <img src="${player.partnerLogoBase64}" class="partner-contact-logo" alt="Partner Logo">
        </div>`
     : '';
 
@@ -255,11 +253,9 @@ function buildCard(player) {
       <div class="card-header-center">
         <div class="card-program-name">1. FC KÖLN — INTERNATIONAL TALENT PATHWAY</div>
         <div class="card-player-name-wrap">
-          ${jerseyWatermark}
           <div class="card-player-name">${val(player.firstName)} <strong>${player.lastName ? player.lastName.toUpperCase() : ''}</strong></div>
         </div>
       </div>
-      ${partnerLogoHTML}
     </div>
 
     <!-- ── 2. BIO ROW ──────────────────────────────────────── -->
@@ -276,7 +272,9 @@ function buildCard(player) {
           <tr><td class="info-label">Nationality</td><td class="info-value">${val(player.nationality)}</td></tr>
           <tr><td class="info-label">Passport</td><td class="info-value">${val(player.passportCountry)}</td></tr>
           <tr><td class="info-label">Date of Birth</td><td class="info-value">${formatDate(player.dateOfBirth)}</td></tr>
-          ${calcAge(player.dateOfBirth) !== null ? `<tr><td class="info-label">Age</td><td class="info-value">${calcAge(player.dateOfBirth)} years</td></tr>` : ''}
+          <tr><td class="info-label">Height</td><td class="info-value">${formatHeight(player.heightCm)}</td></tr>
+          <tr><td class="info-label">Weight</td><td class="info-value">${formatWeight(player.weightKg)}</td></tr>
+          <tr><td class="info-label">Pref. Foot</td><td class="info-value">${val(player.foot)}</td></tr>
         </table>
       </div>
       <div class="card-contact-cell">
@@ -285,23 +283,11 @@ function buildCard(player) {
         <div class="card-contact-role">ITP Coordinator</div>
         <div class="card-contact-org">1. FC Köln Football School</div>
         <div class="card-contact-org">International Talent Pathway</div>
+        ${partnerLogoContactHTML}
       </div>
     </div>
 
-    <!-- ── 3. PLAYER INFORMATION ───────────────────────────── -->
-    <div class="card-section-block">
-      <div class="card-section-title">PLAYER INFORMATION</div>
-      <table class="card-data-table">
-        <thead><tr><th>HEIGHT</th><th>WEIGHT</th><th>PREFERRED FOOT</th></tr></thead>
-        <tbody><tr>
-          <td>${formatHeight(player.heightCm)}</td>
-          <td>${formatWeight(player.weightKg)}</td>
-          <td>${val(player.foot)}</td>
-        </tr></tbody>
-      </table>
-    </div>
-
-    <!-- ── 4. PERFORMANCE TESTS ────────────────────────────── -->
+    <!-- ── 3. PERFORMANCE TESTS ────────────────────────────── -->
     <div class="card-section-block card-tests-block">
       <div class="card-section-title">PERFORMANCE TESTS</div>
       ${buildTestsHTML(tests)}

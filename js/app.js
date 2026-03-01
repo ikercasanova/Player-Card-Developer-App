@@ -121,9 +121,10 @@ const App = {
       card.className = 'player-card-thumb';
 
       const positions = player.positions || [];
-      const posHTML = positions.slice(0, 3).map((p, i) =>
-        `<span class="thumb-pos-badge ${i === 0 ? '' : 'thumb-pos-badge-secondary'}">${p.code}</span>`
-      ).join('');
+      const posHTML = positions.slice(0, 3).map((p, i) => {
+        const code = typeof p === 'string' ? p : p.code;
+        return `<span class="thumb-pos-badge ${i === 0 ? '' : 'thumb-pos-badge-secondary'}">${code}</span>`;
+      }).join('');
 
       const photoHTML = player.photoBase64
         ? `<img src="${player.photoBase64}" class="player-thumb-photo" alt="${player.firstName}">`
