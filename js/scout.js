@@ -451,9 +451,17 @@ function getPlayerArchetype(strengths) {
   if (!dominant) return null;
 
   // Secondary categories (all with ≥1 trait)
+  const ARCHETYPE_LABELS = {
+    technical: 'Technically Gifted',
+    physical:  'Physically Dominant',
+    mental:    'Tactically Sharp',
+    defensive: 'Defensively Solid',
+    character: 'Strong Leader',
+  };
   const activeCats = ARCHETYPE_PRIORITY
     .filter(c => counts[c] > 0)
-    .map(c => SCOUT_TRAITS[c].label);
+    .slice(0, 3)
+    .map(c => ARCHETYPE_LABELS[c]);
 
   return {
     name: ARCHETYPE_NAMES[dominant],

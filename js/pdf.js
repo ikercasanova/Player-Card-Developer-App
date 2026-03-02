@@ -91,8 +91,17 @@ const PDF = {
         videoLinks.forEach(link => {
           pdf.link(link.x, link.y, link.w, link.h, { url: link.url });
         });
+        // Manual blob download — reliable filename across all browsers
+        const blob = pdf.output('blob');
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 100);
       })
-      .save(filename)
       .then(() => {
         document.body.removeChild(cardEl);
         exportBtns.forEach(b => { b.disabled = false; b.textContent = 'Export PDF'; });
