@@ -20,7 +20,7 @@
   width:  794px;
   height: 1123px;
   background: #fff;
-  font-family: var(--br);
+  font-family: var(--bc);
   color: var(--text);
   display: flex;
   flex-direction: column;
@@ -101,7 +101,7 @@
 
 .card-program-name {
   font-family: var(--bc);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 3px;
   opacity: 0.6;
@@ -131,15 +131,10 @@
 .card-player-name {
   font-family: var(--bc);
   font-size: 50px;
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.5px;
-  color: #fff;
-}
-
-.card-player-name strong {
   font-weight: 900;
+  line-height: 1;
   letter-spacing: -1px;
+  color: #fff;
 }
 
 /* ── Partner Logo (in contact cell) ─────────────────────────── */
@@ -154,7 +149,7 @@
 
 .partner-contact-label {
   font-family: var(--bc);
-  font-size: 6.5px;
+  font-size: 7.5px;
   font-weight: 700;
   letter-spacing: 2.5px;
   color: #bbb;
@@ -173,7 +168,7 @@
 ═══════════════════════════════════════════════════════════════ */
 .card-bio-row {
   display: flex;
-  height: 240px;
+  height: 258px;
   flex-shrink: 0;
   border-bottom: 1px solid var(--border);
 }
@@ -221,7 +216,7 @@
 /* ── Section title — universal ──────────────────────────────── */
 .card-section-title {
   font-family: var(--bc);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 900;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -268,7 +263,7 @@
 .info-label {
   font-family: var(--bc);
   color: #aaa;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.2px;
@@ -279,15 +274,31 @@
 .info-value {
   font-family: var(--bc);
   color: var(--text);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: 0.2px;
+}
+
+/* Position display (below overview table) */
+.card-position-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0;
+  padding-top: 5px;
+  padding-bottom: 2px;
+  border-top: 1px solid #EAEAEA;
+}
+
+.card-position-badges {
+  display: flex;
+  gap: 6px;
 }
 
 /* Contact */
 .card-contact-name {
   font-family: var(--bc);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 2px;
@@ -296,7 +307,7 @@
 
 .card-contact-role {
   font-family: var(--bc);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--red);
   font-weight: 800;
   text-transform: uppercase;
@@ -305,7 +316,7 @@
 }
 
 .card-contact-org {
-  font-size: 9px;
+  font-size: 10px;
   color: #666;
   line-height: 1.7;
 }
@@ -334,7 +345,7 @@
   padding: 7px 8px;
   text-align: center;
   font-family: var(--bc);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -350,7 +361,7 @@
   padding: 9px 10px;
   text-align: center;
   font-family: var(--bc);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 800;
   color: var(--text);
   border-right: 1px solid #EBEBEB;
@@ -375,7 +386,7 @@
   align-items: center;
   gap: 4px;
   font-family: var(--bc);
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -404,7 +415,7 @@
   width: 90px;
   flex-shrink: 0;
   font-family: var(--bc);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -415,7 +426,7 @@
   width: 58px;
   flex-shrink: 0;
   font-family: var(--bc);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: 0.2px;
@@ -453,7 +464,7 @@
   flex-shrink: 0;
   text-align: right;
   font-family: var(--bc);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   color: #999;
   letter-spacing: 0.2px;
@@ -463,8 +474,8 @@
    5. ABOUT THE PLAYER
 ═══════════════════════════════════════════════════════════════ */
 .card-about-block {
-  flex: 1;
-  min-height: 0;
+  flex: 0 0 auto;
+  min-height: 120px;
   overflow: hidden;
   position: relative;
   background: #F9F9F9;
@@ -500,7 +511,7 @@
 
 .card-col-heading {
   font-family: var(--bc);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -523,7 +534,7 @@
 
 .card-strength-item {
   font-family: var(--bc);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text);
   padding: 3px 0;
@@ -551,30 +562,30 @@
 .card-empty-dash {
   color: #aaa;
   font-style: italic;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .card-about-text {
-  font-size: 12.5px;
+  font-family: var(--bc);
+  font-size: 14px;
+  font-weight: 500;
   line-height: 1.72;
   color: #2a2a2a;
   overflow: hidden;
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   6. BOTTOM ROW — Videos | Position
+   6. BOTTOM ROW — Videos
 ═══════════════════════════════════════════════════════════════ */
 .card-bottom-row {
   display: flex;
-  height: 310px;
   flex-shrink: 0;
   border-top: 1px solid var(--border);
 }
 
 .card-videos-cell {
-  flex: 1;
-  padding: 12px 16px;
-  border-right: 1px solid var(--border);
+  width: 100%;
+  padding: 12px 18px;
   overflow: hidden;
   min-width: 0;
 }
@@ -582,6 +593,7 @@
 .card-videos-content {
   display: flex;
   gap: 14px;
+  justify-content: center;
 }
 
 .card-video-item {
@@ -592,7 +604,7 @@
 
 .card-video-thumb {
   width: 100%;
-  height: 115px;
+  height: 100px;
   object-fit: cover;
   border-radius: 4px;
   border: 1px solid var(--border);
@@ -601,7 +613,7 @@
 
 .card-video-label {
   font-family: var(--bc);
-  font-size: 9px;
+  font-size: 10px;
   color: var(--red);
   font-weight: 700;
   letter-spacing: 1px;
@@ -614,7 +626,7 @@
 /* Generated video thumbnail — used for Veo / non-YouTube links */
 .card-video-thumb-gen {
   width: 100%;
-  height: 115px;
+  height: 100px;
   border-radius: 4px;
   background: linear-gradient(135deg, #111 0%, #2a0005 60%, #4a000a 100%);
   display: flex;
@@ -638,7 +650,7 @@
 
 .card-video-thumb-gen-title {
   font-family: var(--bc);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
   letter-spacing: 4px;
   color: #fff;
@@ -647,7 +659,7 @@
 
 .card-video-thumb-gen-name {
   font-family: var(--bc);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 600;
   color: rgba(255,255,255,0.4);
   letter-spacing: 2px;
@@ -660,7 +672,7 @@
   bottom: 6px;
   right: 8px;
   font-family: var(--bc);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: rgba(255,255,255,0.3);
@@ -679,51 +691,16 @@
 
 .card-no-videos span {
   font-family: var(--bc);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #ccc;
 }
 
-/* Position cell */
-.card-position-cell {
-  width: 268px;
-  flex-shrink: 0;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--border);
-}
-
-.card-pitch-wrap {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #0d1a0d;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
-}
-
-.card-pitch-wrap svg {
-  max-height: 100%;
-  max-width: 100%;
-}
-
-.card-position-pills {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  justify-content: center;
-}
-
 .card-pos-pill {
   font-family: var(--bc);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   padding: 3px 12px;
   border-radius: 12px;
@@ -743,13 +720,68 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   6b. PLAYER ARCHETYPE BANNER
+═══════════════════════════════════════════════════════════════ */
+.card-archetype-banner {
+  flex: 1;
+  min-height: 40px;
+  background: linear-gradient(110deg, #111 0%, #2a0005 42%, #ED1C24 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle diagonal texture (matches header) */
+.card-archetype-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -55deg,
+    transparent,
+    transparent 18px,
+    rgba(255,255,255,0.022) 18px,
+    rgba(255,255,255,0.022) 19px
+  );
+  pointer-events: none;
+}
+
+.card-archetype-inner {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.card-archetype-name {
+  font-family: var(--bc);
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.card-archetype-cats {
+  font-family: var(--bc);
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    7. FOOTER
 ═══════════════════════════════════════════════════════════════ */
 .card-footer {
   background: var(--dark);
   color: rgba(255,255,255,0.5);
   font-family: var(--bc);
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;

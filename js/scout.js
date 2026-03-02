@@ -407,3 +407,56 @@ const ScoutGenerator = {
     return null;
   }
 };
+
+// ── Player Archetype (trading-card style label) ──────────────
+
+const ARCHETYPE_NAMES = {
+  technical: 'CREATIVE TECHNICIAN',
+  physical:  'ATHLETIC FORCE',
+  mental:    'TACTICAL MIND',
+  defensive: 'DEFENSIVE SPECIALIST',
+  character: 'NATURAL LEADER',
+};
+
+const ARCHETYPE_PRIORITY = ['technical', 'physical', 'mental', 'defensive', 'character'];
+
+function getPlayerArchetype(strengths) {
+  if (!strengths || !strengths.length) return null;
+
+  // Build reverse lookup: label → category
+  const labelToCat = {};
+  for (const [catKey, cat] of Object.entries(SCOUT_TRAITS)) {
+    for (const label of Object.values(cat.traits)) {
+      labelToCat[label] = catKey;
+    }
+  }
+
+  // Count traits per category
+  const counts = {};
+  for (const label of strengths) {
+    const cat = labelToCat[label];
+    if (cat) counts[cat] = (counts[cat] || 0) + 1;
+  }
+
+  // Find dominant category (highest count, tiebreak by priority order)
+  let dominant = null;
+  let maxCount = 0;
+  for (const cat of ARCHETYPE_PRIORITY) {
+    if ((counts[cat] || 0) > maxCount) {
+      maxCount = counts[cat];
+      dominant = cat;
+    }
+  }
+
+  if (!dominant) return null;
+
+  // Secondary categories (all with ≥1 trait)
+  const activeCats = ARCHETYPE_PRIORITY
+    .filter(c => counts[c] > 0)
+    .map(c => SCOUT_TRAITS[c].label);
+
+  return {
+    name: ARCHETYPE_NAMES[dominant],
+    categories: activeCats,
+  };
+}

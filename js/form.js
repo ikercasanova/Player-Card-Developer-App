@@ -5,17 +5,18 @@
              live preview updates
 ═══════════════════════════════════════════════════════════════ */
 
+// Landscape pitch coords (viewBox 0 0 150 100)
 const PITCH_POS_COORDS = {
-  GK:  { cx: 50, cy: 138 },
-  CB:  { cx: 50, cy: 115 },
-  LB:  { cx: 20, cy: 108 },
-  RB:  { cx: 80, cy: 108 },
-  CDM: { cx: 50, cy: 90  },
-  CM:  { cx: 50, cy: 75  },
-  CAM: { cx: 50, cy: 58  },
-  LW:  { cx: 18, cy: 50  },
-  RW:  { cx: 82, cy: 50  },
-  ST:  { cx: 50, cy: 30  }
+  GK:  { cx: 12,  cy: 50 },
+  CB:  { cx: 35,  cy: 50 },
+  LB:  { cx: 42,  cy: 20 },
+  RB:  { cx: 42,  cy: 80 },
+  CDM: { cx: 60,  cy: 50 },
+  CM:  { cx: 75,  cy: 50 },
+  CAM: { cx: 92,  cy: 50 },
+  LW:  { cx: 100, cy: 18 },
+  RW:  { cx: 100, cy: 82 },
+  ST:  { cx: 120, cy: 50 }
 };
 
 const Form = {
@@ -372,24 +373,24 @@ const Form = {
     }
 
     const stripes = [0,1,2,3,4,5,6,7,8,9].map(i =>
-      `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0d1a0d' : '#112211'}"/>`
+      `<rect x="${i*15}" y="0" width="15" height="100" fill="${i%2===0 ? '#0d1a0d' : '#112211'}"/>`
     ).join('');
 
-    return `<svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg"
+    return `<svg viewBox="0 0 150 100" xmlns="http://www.w3.org/2000/svg"
         style="width:100%;display:block;border-radius:6px;overflow:hidden;">
       ${stripes}
-      <rect x="3" y="3" width="94" height="144" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
-      <line x1="3" y1="75" x2="97" y2="75" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-      <circle cx="50" cy="75" r="12" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-      <circle cx="50" cy="75" r="1.2" fill="rgba(255,255,255,0.3)"/>
-      <rect x="22" y="3" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-      <rect x="35" y="3" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-      <circle cx="50" cy="21" r="1.2" fill="rgba(255,255,255,0.3)"/>
-      <rect x="38" y="1" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
-      <rect x="22" y="120" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-      <rect x="35" y="138" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-      <circle cx="50" cy="129" r="1.2" fill="rgba(255,255,255,0.3)"/>
-      <rect x="38" y="146" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+      <rect x="3" y="3" width="144" height="94" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
+      <line x1="75" y1="3" x2="75" y2="97" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="75" cy="50" r="12" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="75" cy="50" r="1.2" fill="rgba(255,255,255,0.3)"/>
+      <rect x="3" y="22" width="27" height="56" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <rect x="3" y="35" width="9" height="30" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="21" cy="50" r="1.2" fill="rgba(255,255,255,0.3)"/>
+      <rect x="1" y="38" width="3" height="24" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+      <rect x="120" y="22" width="27" height="56" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <rect x="138" y="35" width="9" height="30" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
+      <circle cx="129" cy="50" r="1.2" fill="rgba(255,255,255,0.3)"/>
+      <rect x="146" y="38" width="3" height="24" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
       ${dotsHTML}
     </svg>`;
   },

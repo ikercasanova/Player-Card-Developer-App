@@ -60,18 +60,6 @@ function buildTestsHTML(tests) {
   return legend + rows;
 }
 
-const POSITION_COORDS = {
-  GK:  { cx: 50, cy: 138 },
-  CB:  { cx: 50, cy: 115 },
-  LB:  { cx: 20, cy: 108 },
-  RB:  { cx: 80, cy: 108 },
-  CDM: { cx: 50, cy: 90  },
-  CM:  { cx: 50, cy: 75  },
-  CAM: { cx: 50, cy: 58  },
-  LW:  { cx: 18, cy: 50  },
-  RW:  { cx: 82, cy: 50  },
-  ST:  { cx: 50, cy: 30  }
-};
 
 // ── FC Köln Football School logo — official image ─────────────
 // Located at assets/logos/koln-fs.webp
@@ -122,62 +110,6 @@ function val(v) {
   return (v !== undefined && v !== null && v !== '') ? v : '—';
 }
 
-// ── Pitch SVG ─────────────────────────────────────────────────
-
-function buildPitchSVG(positions) {
-  // Dark green alternating stripes — football field aesthetic
-  const stripes = [0,1,2,3,4,5,6,7,8,9].map(i =>
-    `<rect x="0" y="${i*15}" width="100" height="15" fill="${i%2===0 ? '#0d1a0d' : '#112211'}"/>`
-  ).join('');
-
-  const markings = `
-    ${stripes}
-    <rect x="3" y="3" width="94" height="144" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
-    <line x1="3" y1="75" x2="97" y2="75" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-    <circle cx="50" cy="75" r="12" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-    <circle cx="50" cy="75" r="1.2" fill="rgba(255,255,255,0.3)"/>
-    <rect x="22" y="3" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-    <rect x="35" y="3" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-    <circle cx="50" cy="21" r="1.2" fill="rgba(255,255,255,0.3)"/>
-    <rect x="38" y="1" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
-    <rect x="22" y="120" width="56" height="27" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-    <rect x="35" y="138" width="30" height="9" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="0.6"/>
-    <circle cx="50" cy="129" r="1.2" fill="rgba(255,255,255,0.3)"/>
-    <rect x="38" y="146" width="24" height="3" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
-  `;
-
-  // Ghost markers
-  const ghosts = Object.values(POSITION_COORDS).map(c =>
-    `<circle cx="${c.cx}" cy="${c.cy}" r="4.5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>`
-  ).join('');
-
-  // Selected positions — normalize strings to {code} objects
-  let selected = '';
-  if (positions && positions.length > 0) {
-    positions.forEach((rawPos, i) => {
-      const pos = typeof rawPos === 'string' ? { code: rawPos } : rawPos;
-      const c = POSITION_COORDS[pos.code];
-      if (!c) return;
-      if (i === 0) {
-        // Primary: solid red with white outline glow
-        selected += `
-          <circle cx="${c.cx}" cy="${c.cy}" r="7" fill="#ED1C24" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
-          <text x="${c.cx}" y="${c.cy + 0.5}" text-anchor="middle" dominant-baseline="middle"
-            fill="white" font-size="3.8" font-weight="bold" font-family="Arial,sans-serif">${pos.code}</text>`;
-      } else {
-        // Secondary: white outline on dark
-        selected += `
-          <circle cx="${c.cx}" cy="${c.cy}" r="7" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.65)" stroke-width="1"/>
-          <text x="${c.cx}" y="${c.cy + 0.5}" text-anchor="middle" dominant-baseline="middle"
-            fill="rgba(255,255,255,0.85)" font-size="3.8" font-weight="bold" font-family="Arial,sans-serif">${pos.code}</text>`;
-      }
-    });
-  }
-
-  return `<svg viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
-    ${markings}${ghosts}${selected}
-  </svg>`;
-}
 
 // ── YouTube Thumbnail ─────────────────────────────────────────
 
@@ -256,6 +188,20 @@ function buildPositionPills(positions) {
   }).join('');
 }
 
+// ── Player Archetype Banner ──────────────────────────────────
+
+function buildArchetypeBanner(player) {
+  const arch = getPlayerArchetype(player.strengths);
+  if (!arch) return '';
+
+  return `<div class="card-archetype-banner">
+    <div class="card-archetype-inner">
+      <div class="card-archetype-name">${arch.name}</div>
+      <div class="card-archetype-cats">${arch.categories.join(' · ')}</div>
+    </div>
+  </div>`;
+}
+
 // ── Main buildCard ────────────────────────────────────────────
 
 function buildCard(player) {
@@ -291,7 +237,7 @@ function buildCard(player) {
       <div class="card-header-center">
         <div class="card-program-name">1. FC KÖLN — INTERNATIONAL TALENT PATHWAY</div>
         <div class="card-player-name-wrap">
-          <div class="card-player-name">${val(player.firstName)} <strong>${player.lastName ? player.lastName.toUpperCase() : ''}</strong></div>
+          <div class="card-player-name">${player.firstName ? player.firstName.toUpperCase() : ''} ${player.lastName ? player.lastName.toUpperCase() : ''}</div>
         </div>
       </div>
     </div>
@@ -314,6 +260,10 @@ function buildCard(player) {
           <tr><td class="info-label">Weight</td><td class="info-value">${formatWeight(player.weightKg)}</td></tr>
           <tr><td class="info-label">Pref. Foot</td><td class="info-value">${val(player.foot)}</td></tr>
         </table>
+        ${pills ? `<div class="card-position-display">
+          <span class="info-label">Position</span>
+          <div class="card-position-badges">${pills}</div>
+        </div>` : ''}
       </div>
       <div class="card-contact-cell">
         <div class="card-section-title">CONTACT</div>
@@ -351,16 +301,14 @@ function buildCard(player) {
       </div>
     </div>
 
+    <!-- ── 5b. ARCHETYPE BANNER ─────────────────────────────── -->
+    ${buildArchetypeBanner(player)}
+
     <!-- ── 6. BOTTOM ROW ───────────────────────────────────── -->
     <div class="card-bottom-row">
       <div class="card-videos-cell">
         <div class="card-section-title">VIDEOS</div>
         <div class="card-videos-content">${buildVideosHTML(player.videoUrls, `${player.firstName || ''} ${player.lastName || ''}`.trim())}</div>
-      </div>
-      <div class="card-position-cell">
-        <div class="card-section-title">POSITION</div>
-        <div class="card-pitch-wrap">${buildPitchSVG(player.positions)}</div>
-        ${pills ? `<div class="card-position-pills">${pills}</div>` : ''}
       </div>
     </div>
 
