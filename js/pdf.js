@@ -52,6 +52,16 @@ const PDF = {
       await PDF._svgToCanvas(pitchSvg);
     }
 
+    // Fix 3: Replace external video thumbnails with generated fallbacks
+    // html2canvas can't load cross-origin images when opened via file://
+    cardEl.querySelectorAll('.card-video-thumb').forEach(img => {
+      img.style.display = 'none';
+      const fallback = img.nextElementSibling;
+      if (fallback && fallback.classList.contains('card-video-thumb-gen')) {
+        fallback.style.display = 'flex';
+      }
+    });
+
     // Capture video link positions (before html2pdf wraps the DOM)
     const videoLinks = PDF._getVideoLinks(cardEl);
 
@@ -64,11 +74,12 @@ const PDF = {
       filename,
       image:    { type: 'jpeg', quality: 0.98 },
       html2canvas: {
-        scale:    2,
-        useCORS:  true,
-        logging:  false,
-        width:    794,
-        height:   1123
+        scale:      2,
+        useCORS:    true,
+        allowTaint: true,
+        logging:    false,
+        width:      794,
+        height:     1123
       },
       jsPDF: {
         unit:        'mm',
