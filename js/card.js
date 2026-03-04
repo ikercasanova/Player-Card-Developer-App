@@ -309,12 +309,15 @@ function buildCard(player) {
       <div class="card-videos-cell">
         <div class="card-section-title">VIDEOS</div>
         <div class="card-videos-content">${buildVideosHTML(player.videoUrls, `${player.firstName || ''} ${player.lastName || ''}`.trim())}</div>
+        ${(player.videoUrls?.[0]?.trim() || player.videoUrls?.[1]?.trim())
+          ? '<div class="card-videos-hint">Download PDF and click on video to watch</div>'
+          : ''}
       </div>
     </div>
 
     <!-- ── 7. FOOTER ───────────────────────────────────────── -->
     <div class="card-footer">
-      <span>1. FC KÖLN INTERNATIONAL TALENT PROGRAM — PLAYER PROFILE</span>
+      <span>1. FC KÖLN INTERNATIONAL TALENT PATHWAY — PLAYER PROFILE</span>
     </div>
   `;
 

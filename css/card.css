@@ -698,6 +698,17 @@
   color: #ccc;
 }
 
+.card-videos-hint {
+  text-align: center;
+  font-family: var(--bc);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #999;
+  margin-top: 8px;
+}
+
 .card-pos-pill {
   font-family: var(--bc);
   font-size: 11px;
