@@ -317,11 +317,11 @@
 
 .card-contact-email {
   font-family: var(--br);
-  font-size: 8.5px;
+  font-size: 7px;
   color: #555;
   font-weight: 500;
   margin-bottom: 8px;
-  word-break: break-all;
+  letter-spacing: 0.1px;
 }
 
 .card-contact-org {
