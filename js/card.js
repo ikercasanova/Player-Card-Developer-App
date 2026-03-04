@@ -269,6 +269,7 @@ function buildCard(player) {
         <div class="card-section-title">CONTACT</div>
         <div class="card-contact-name">Max Bisinger</div>
         <div class="card-contact-role">ITP Coordinator</div>
+        <div class="card-contact-email">max.bisinger@warubi-sports.com</div>
         <div class="card-contact-org">1. FC Köln Football School</div>
         <div class="card-contact-org">International Talent Pathway</div>
         ${partnerLogoContactHTML}
